@@ -33,6 +33,7 @@ public class PoolManager : MonoBehaviour
     private void Awake()
     {
         poolDictionary.Clear();
+        poolLookup.Clear();
         foreach (PoolConfig pConfig in poolPopulationConfig)
         {
             SetupPool(pConfig.component, pConfig.poolAmount, pConfig.poolerType);

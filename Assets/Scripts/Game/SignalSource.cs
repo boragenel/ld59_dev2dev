@@ -13,10 +13,13 @@ public class SignalSource : MonoBehaviour
 
     [Header("Setup")]
     public float maxSignalRadius;
+    public bool isUnblockableSignal;
     //TODO Add visual indicator for signal radius, semi transparent circle?
 
     [SerializeField]
     private LayerMask signalSearchMask;
+    [SerializeField]
+    private LayerMask signalBlockMask;
 
     public float signalLossPerUnitDistance = 0.1f;
     public float minDistanceToReceiveMaxSignal = 1.25f;
@@ -29,7 +32,7 @@ public class SignalSource : MonoBehaviour
     //Allowing multiple signal receivers so we can power up enemies and obstacles too etc
     private HashSet<SignalReceptor> receivers = new HashSet<SignalReceptor>();
     private Dictionary<SignalReceptor, SignalRenderer> signalRenderers = new Dictionary<SignalReceptor, SignalRenderer>();
-
+    private List<SignalReceptor> receiversToRemove = new List<SignalReceptor>();
     //private void Update()
     //{
     //    //add updating signal renderers
@@ -49,7 +52,6 @@ public class SignalSource : MonoBehaviour
         receivers.Clear();
 
         Physics.OverlapSphereNonAlloc(transform.position, maxSignalRadius, cols, signalSearchMask);
-        bool foundPlayer = false;
         foreach (Collider col in cols)
         {
             if (!col)
@@ -58,15 +60,18 @@ public class SignalSource : MonoBehaviour
             //only supporting one signal receiver per collider, not sure if need more?
             if (col.TryGetComponent<SignalReceptor>(out SignalReceptor signalReceiver))
             {
-                // TODO: Add raycasting to check if it actually has a clear path towards the receiver
-                foundPlayer = true;
-                receivers.Add(signalReceiver);
+                if (isUnblockableSignal)
+                    receivers.Add(signalReceiver);
+                else if (!Physics.Linecast(transform.position, signalReceiver.transform.position, signalBlockMask))
+                {
+                    receivers.Add(signalReceiver);
+                }
             }
 
-            //else if (col.gameObject.layer == LayerMask.NameToLayer("Reflector"))
-            //{
-            //    // TODO: does it have a clear path to reflector and then reflectors bounce hits the player?
-            //}
+            else if (col.gameObject.layer == LayerMask.NameToLayer("Reflector"))
+            {
+                // TODO: does it have a clear path to reflector and then reflectors bounce hits the player?
+            }
         }
         foreach (var signalReceiver in receivers)
         {
@@ -74,26 +79,34 @@ public class SignalSource : MonoBehaviour
             if (!signalRenderers.ContainsKey(signalReceiver))
             {
                 SignalRenderer newRenderer = PoolManager.DequeueObject<SignalRenderer>(PoolerType.SIGNAL_RENDERER);
-                newRenderer.transform.SetParent(signalRendererHolder.transform, false);
-                newRenderer.transform.localPosition = Vector3.zero;
+                //newRenderer.transform.SetParent(signalRendererHolder.transform, false);
+              //  newRenderer.transform.localPosition = Vector3.zero;
                 newRenderer.gameObject.SetActive(true);
                 signalRenderers.Add(signalReceiver, newRenderer);
             }
         }
+        receiversToRemove.Clear();
         foreach (KeyValuePair<SignalReceptor, SignalRenderer> signalRender in signalRenderers)
         {
             if (!receivers.Contains(signalRender.Key))
             {
-                signalRender.Value.gameObject.SetActive(true);
-                PoolManager.EnqueueObject(signalRender.Value, PoolerType.SIGNAL_RENDERER);
-                signalRenderers.Remove(signalRender.Key);
+                receiversToRemove.Add(signalRender.Key);
             }
+        }
+        foreach (SignalReceptor signalReceiver in receiversToRemove)
+        {
+            signalRenderers[signalReceiver].gameObject.SetActive(false);
+            signalRenderers[signalReceiver].transform.SetParent(null);
+            PoolManager.EnqueueObject(signalRenderers[signalReceiver], PoolerType.SIGNAL_RENDERER);
+            signalRenderers.Remove(signalReceiver);
         }
     }
 
     //Todo, change color based on signal receiver type?
     public void UpdateSignalVisualization(SignalReceptor receiver, Transform signalReceiver, float dist)
     {
+        if (!signalRenderers.ContainsKey(receiver)) return;
+
         var renderer = signalRenderers[receiver];
 
         renderer.lineRenderer.SetPosition(0, transform.position);
@@ -110,4 +123,11 @@ public class SignalSource : MonoBehaviour
         //renderer.lineRenderer.colorGradient.alphaKeys[1].time = ((maxSignalRadius - dist) / maxSignalRadius);
     }
 
+    private void OnDestroy()
+    {
+        foreach (SignalRenderer signalRenderer in signalRenderers.Values)
+        {        
+            PoolManager.EnqueueObject(signalRenderer, PoolerType.SIGNAL_RENDERER);
+        }
+    }
 }

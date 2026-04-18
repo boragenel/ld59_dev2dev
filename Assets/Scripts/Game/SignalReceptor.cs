@@ -11,7 +11,7 @@ public class SignalReceptor : MonoBehaviour
     [ReadOnlyAttribute] private float receptionStrenght = 0f;
     private float prevReception = 0f;
 
-    public static UnityAction<float> OnReceptionChanged;
+    public UnityAction<float> OnReceptionChanged;
 
     public float ReceptionStrenght { get => receptionStrenght; set => receptionStrenght = value; }
 
