@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class LevelBase : MonoBehaviour
 {
-    public GameObject levelEntrance;
-    public GameObject levelExit; //for maybe having to do stuff to unlock exit?
+    [ReadOnly] public GameObject levelEntrance;
+    [ReadOnly] public GameObject levelExit; //for maybe having to do stuff to unlock exit?
 
 
     private void Awake()
     {
         levelEntrance = FindDeepChild(transform, "EntranceGate")?.gameObject;
-        levelExit= FindDeepChild(transform, "ExitGate")?.gameObject;
+        levelExit = FindDeepChild(transform, "ExitGate")?.gameObject;
     }
     public static Transform FindDeepChild(Transform parent, string name)
     {

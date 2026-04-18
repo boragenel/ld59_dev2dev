@@ -10,7 +10,8 @@ public enum PoolerType
 {
     NONE,
     GENERIC_SPRITE,
-    PLAYER_BULLET
+    PLAYER_BULLET,
+    SIGNAL_RENDERER,
 }
 
 [Serializable]
@@ -31,11 +32,11 @@ public class PoolManager : MonoBehaviour
 
     private void Awake()
     {
+        poolDictionary.Clear();
         foreach (PoolConfig pConfig in poolPopulationConfig)
         {
-            SetupPool(pConfig.component, pConfig.poolAmount,pConfig.poolerType);    
+            SetupPool(pConfig.component, pConfig.poolAmount, pConfig.poolerType);
         }
-        
     }
 
     public static void EnqueueObject<T>(T item, PoolerType pType) where T : Component
@@ -57,33 +58,34 @@ public class PoolManager : MonoBehaviour
         return newInstance;
 
     }
-    
+
     public static T DequeueObject<T>(PoolerType key) where T : Component
     {
         if (poolDictionary[key].TryDequeue(out var item))
         {
             return (T)item;
         }
-        
+
         return (T)EnqueueNewInstance(poolLookup[key], key);
     }
-    
-    public static void SetupPool<T>(T pooledItemPrefab, int poolsize, PoolerType dictionaryEntry) where T: Component
+
+    public static void SetupPool<T>(T pooledItemPrefab, int poolsize, PoolerType dictionaryEntry) where T : Component
     {
-        if (inited)
-        {
-            foreach (KeyValuePair<PoolerType, Queue<Component>> kvp in poolDictionary)
-            {
-                foreach (Component c in kvp.Value)
-                {
-                    Destroy(c);
-                }
-                kvp.Value.Clear();
-            }
-            poolDictionary.Clear();
-            poolLookup.Clear();
-        }
-        inited = true;
+        //if (inited)
+        //{
+        //    foreach (KeyValuePair<PoolerType, Queue<Component>> kvp in poolDictionary)
+        //    {
+        //        foreach (Component c in kvp.Value)
+        //        {
+        //            Destroy(c);
+        //        }
+        //        kvp.Value.Clear();
+        //    }
+        //    poolDictionary.Clear();
+        //    poolLookup.Clear();
+        //}
+        //inited = true;
+
         poolDictionary.Add(dictionaryEntry, new Queue<Component>());
         poolLookup.Add(dictionaryEntry, pooledItemPrefab);
         for (int i = 0; i < poolsize; i++)
@@ -93,6 +95,4 @@ public class PoolManager : MonoBehaviour
             poolDictionary[dictionaryEntry].Enqueue((T)pooledInstance);
         }
     }
-    
-
 }

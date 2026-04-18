@@ -32,7 +32,7 @@ public class Gate : MonoBehaviour
             pc.controlsEnabled = false;
             pc.transform.SetParent(null, true);
 
-            pc.GetWeapon().ResetSources();
+            pc.playerSignalReceiver.ResetSources();
 
             pc.transform.DOScale(0, 0.15f);
             levelFrom.transform.position += Vector3.forward * 30;
