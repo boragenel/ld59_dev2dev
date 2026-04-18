@@ -37,12 +37,18 @@ public class SignalSource : MonoBehaviour
          bool foundPlayer = false;
          foreach (Collider col in cols)
          {
-             if (col && col.CompareTag("Player"))
+             if (!col)
+                 continue;
+             
+             if (col.CompareTag("Player"))
              {
                  // TODO: Add raycasting to check if it actually has a clear path towards the player
                  
                  foundPlayer = true;
                  col.GetComponent<PlayerController>().GetWeapon().AddSignal(this);
+             } else if (col.gameObject.layer == LayerMask.NameToLayer("Reflector"))
+             {
+                 // TODO: does it have a clear path to reflector and then reflectors bounce hits the player?
              }
          }
 
