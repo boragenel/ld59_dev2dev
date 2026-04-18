@@ -9,7 +9,8 @@ using Object = UnityEngine.Object;
 public enum PoolerType
 {
     NONE,
-    GENERIC_SPRITE
+    GENERIC_SPRITE,
+    PLAYER_BULLET
 }
 
 [Serializable]
@@ -57,7 +58,7 @@ public class PoolManager : MonoBehaviour
 
     }
     
-    public static T DequeueObejct<T>(PoolerType key) where T : Component
+    public static T DequeueObject<T>(PoolerType key) where T : Component
     {
         if (poolDictionary[key].TryDequeue(out var item))
         {

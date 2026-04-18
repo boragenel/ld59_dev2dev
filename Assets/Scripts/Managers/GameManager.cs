@@ -24,7 +24,12 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     [ReadOnlyAttribute]
     private GamePhase currentGamePhase = GamePhase.NONE;
-    //[Header("Game Dynamics")]
+
+    [Header("Game Dynamics")]
+    public bool isTransitioning = false;
+
+    [Header("Key Objects")] 
+    public PlayerController player;
     
     
     ///
@@ -42,16 +47,6 @@ public class GameManager : MonoBehaviour
         
         ChangeGameState(startingGamePhase);
         //SoundManager.Instance.PlayOneShot(SoundType.KISS,1f,Random.Range(0.8f,1.2f));
-
-        SpriteRenderer spriteFromPool = PoolManager.DequeueObejct<SpriteRenderer>(PoolerType.GENERIC_SPRITE);
-        spriteFromPool.transform.position = Random.insideUnitCircle;
-
-        
-        
-        
-        
-        PoolManager.EnqueueObject(spriteFromPool,PoolerType.GENERIC_SPRITE);
-        
         
         
         
