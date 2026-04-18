@@ -130,8 +130,9 @@ public class Weapon : MonoBehaviour
     void UpdateReception()
     {
         reception = 0;
+        signalSources.RemoveAll(item => item == null);
         foreach (SignalSource signalSource in signalSources)
-        {
+        {             
             Vector3 diff = signalSource.transform.position - transform.position;
             float dist = diff.magnitude;
             float signalGain = 1- ((dist) /(signalSource.maxSignalRadius));

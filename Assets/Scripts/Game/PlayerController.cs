@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
         return weapon;
     }
     
+    //What in the luney tunes ???????????????????
     void HandleCurrentZone()
     {
         Physics.Raycast(transform.position+Vector3.back*0.5f, Vector3.forward, out RaycastHit hit, 25, LayerMask.GetMask("Zone"));
@@ -43,6 +44,7 @@ public class PlayerController : MonoBehaviour
         {
             if (transform.parent != hit.transform.parent)
             {
+                //transform.SetParent(hit.transform.Find("combatHolder"),true);           
                 transform.SetParent(hit.transform.parent,true);
                 currentZone = hit.transform.parent;
             }
