@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7356941901141503952}
   - component: {fileID: 308405115646712137}
   - component: {fileID: 4315473382721264622}
-  - component: {fileID: 7483036186249235232}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -32,6 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5942931047753555510}
   - {fileID: 7292338365526679062}
   - {fileID: 7951030077423554793}
   m_Father: {fileID: 0}
@@ -48,10 +48,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1c6ce4edb45a1948bed9217b187b735, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  playerSignalReceiver: {fileID: 6606505212125882372}
-  currentZone: {fileID: 0}
+  baseSpeed: 0
+  extraSignalSpeed: 0
+  PlayerSignalReceiver: {fileID: 0}
   innerMesh: {fileID: 7292338365526679062}
-  speed: 3.5
+  collision: {fileID: 5199030715646896422}
+  currentZone: {fileID: 0}
   controlsEnabled: 1
   weapon: {fileID: 1662970991266041055}
 --- !u!54 &4315473382721264622
@@ -81,27 +83,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 120
   m_CollisionDetection: 1
---- !u!135 &7483036186249235232
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1902373648082975354}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.28801918
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2063654241350444168
 GameObject:
   m_ObjectHideFlags: 0
@@ -5364,6 +5345,59 @@ MonoBehaviour:
   baseReloadSpeed: 0.75
   baseMagazineSize: 8
   signalReceptor: {fileID: 0}
+--- !u!1 &5199030715646896422
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5942931047753555510}
+  - component: {fileID: 8390589117040634025}
+  m_Layer: 7
+  m_Name: Collider
+  m_TagString: Player
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5942931047753555510
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5199030715646896422}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7356941901141503952}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &8390589117040634025
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5199030715646896422}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.28801918
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &3105721522123221276
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5421,17 +5455,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 99bead5d055b4564cbf36358f6bc23c8, type: 3}
---- !u!114 &6606505212125882372 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8121881536568426776, guid: 99bead5d055b4564cbf36358f6bc23c8, type: 3}
-  m_PrefabInstance: {fileID: 3105721522123221276}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f7adcf4aceab164d92655c4a6e874b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SignalReceptor
 --- !u!4 &7951030077423554793 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4993936731808446965, guid: 99bead5d055b4564cbf36358f6bc23c8, type: 3}

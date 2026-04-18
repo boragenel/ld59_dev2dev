@@ -13,12 +13,12 @@ public class UIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        PlayerController.Instance.playerSignalReceiver.OnReceptionChanged += UpdateReceptionVisuals;
+        PlayerController.Instance.PlayerSignalReceiver.OnReceptionChanged += UpdateReceptionVisuals;
     }
 
     private void OnDestroy()
     {
-        PlayerController.Instance.playerSignalReceiver.OnReceptionChanged += UpdateReceptionVisuals;
+        PlayerController.Instance.PlayerSignalReceiver.OnReceptionChanged += UpdateReceptionVisuals;
     }
 
     // Update is called once per frame

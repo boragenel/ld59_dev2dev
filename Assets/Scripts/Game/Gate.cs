@@ -23,17 +23,19 @@ public class Gate : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            GameManager.OnLevelComplete?.Invoke();
+
             GameObject levelFrom = GameManager.Instance.currentLevel.gameObject;
             GameObject levelTo = Instantiate(GameManager.Instance.GetNextLevelPrefab());
 
             GameManager.Instance.currentLevel = levelTo.GetComponent<LevelBase>();
+            GameManager.Instance.isTransitioning = true;
 
-            PlayerController pc = other.GetComponent<PlayerController>();
+            PlayerController pc = other.GetComponentInParent<PlayerController>();
+            pc.collision.SetActive(false);
             pc.controlsEnabled = false;
             pc.transform.SetParent(null, true);
-
-            pc.playerSignalReceiver.ResetSources();
-
+            pc.PlayerSignalReceiver.ResetSources();
             pc.transform.DOScale(0, 0.15f);
             levelFrom.transform.position += Vector3.forward * 30;
             levelFrom.transform.DOScale(1.25f, 0.5f).OnComplete(() =>
@@ -57,7 +59,9 @@ public class Gate : MonoBehaviour
                     pc.transform.position = pos;
                     pc.transform.DOScale(1f, 0.25f).OnComplete(() =>
                     {
+                        GameManager.Instance.isTransitioning = false;
                         pc.controlsEnabled = true;
+                        pc.collision.SetActive(true);
                         entranceGate.DOScale(0, 0.5f).SetDelay(0.4f);
                     });
                 }

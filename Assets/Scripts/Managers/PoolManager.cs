@@ -57,7 +57,6 @@ public class PoolManager : MonoBehaviour
         newInstance.transform.position = Vector3.zero;
         poolDictionary[key].Enqueue(newInstance);
         return newInstance;
-
     }
 
     public static T DequeueObject<T>(PoolerType key) where T : Component
@@ -66,8 +65,8 @@ public class PoolManager : MonoBehaviour
         {
             return (T)item;
         }
-
-        return (T)EnqueueNewInstance(poolLookup[key], key);
+        EnqueueNewInstance(poolLookup[key], key);
+        return DequeueObject<T>(key);
     }
 
     public static void SetupPool<T>(T pooledItemPrefab, int poolsize, PoolerType dictionaryEntry) where T : Component

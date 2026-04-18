@@ -18,7 +18,7 @@ public class Weapon : MonoBehaviour
     private bool isTryingToFire = false;
     private int noOfBulletsLeft = 8;
 
-    public static UnityAction<float> OnReceptionChanged;
+    //public static UnityAction<float> OnReceptionChanged;
 
     public SignalReceptor signalReceptor;
     // Start is called once before the first execution of Update after the MonoBehaviour is created

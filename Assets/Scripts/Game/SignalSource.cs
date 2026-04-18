@@ -25,7 +25,7 @@ public class SignalSource : MonoBehaviour
     public float minDistanceToReceiveMaxSignal = 1.25f;
 
     //increase this when it inevitably is not enough
-    Collider[] cols = new Collider[16];
+    Collider[] cols = new Collider[32];
 
     // Update is called once per frame
     //Why is this not on fixed update? im changing it
@@ -44,6 +44,10 @@ public class SignalSource : MonoBehaviour
     //    //    UpdateSignalVisualization(signalRender.Value, signalRender.Key.transform, Vector3.Distance(transform.position, signalRender.Key.transform.position));
     //    //}
     //}
+    private void Awake()
+    {
+        GameManager.OnLevelComplete += OnLevelClear;
+    }
     void FixedUpdate()
     {
         if (GameManager.Instance.isTransitioning)
@@ -80,7 +84,7 @@ public class SignalSource : MonoBehaviour
             {
                 SignalRenderer newRenderer = PoolManager.DequeueObject<SignalRenderer>(PoolerType.SIGNAL_RENDERER);
                 //newRenderer.transform.SetParent(signalRendererHolder.transform, false);
-              //  newRenderer.transform.localPosition = Vector3.zero;
+                //  newRenderer.transform.localPosition = Vector3.zero;
                 newRenderer.gameObject.SetActive(true);
                 signalRenderers.Add(signalReceiver, newRenderer);
             }
@@ -96,7 +100,6 @@ public class SignalSource : MonoBehaviour
         foreach (SignalReceptor signalReceiver in receiversToRemove)
         {
             signalRenderers[signalReceiver].gameObject.SetActive(false);
-            signalRenderers[signalReceiver].transform.SetParent(null);
             PoolManager.EnqueueObject(signalRenderers[signalReceiver], PoolerType.SIGNAL_RENDERER);
             signalRenderers.Remove(signalReceiver);
         }
@@ -122,12 +125,17 @@ public class SignalSource : MonoBehaviour
         renderer.lineRenderer.endColor = cEnd;
         //renderer.lineRenderer.colorGradient.alphaKeys[1].time = ((maxSignalRadius - dist) / maxSignalRadius);
     }
-
-    private void OnDestroy()
+    private void OnLevelClear()
     {
+        Debug.Log("CLEAR");
+        GameManager.OnLevelComplete -= OnLevelClear;
         foreach (SignalRenderer signalRenderer in signalRenderers.Values)
-        {        
+        {
+            signalRenderer.gameObject.SetActive(false);
             PoolManager.EnqueueObject(signalRenderer, PoolerType.SIGNAL_RENDERER);
         }
+        signalRenderers.Clear();
+
+        Destroy(this);
     }
 }

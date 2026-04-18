@@ -4,15 +4,20 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    private InputSystem_Actions inputSystemActions;
-    public SignalReceptor playerSignalReceiver;
+    [Header("Speed Balance")]
+    [SerializeField] private float baseSpeed;
+    [SerializeField] private float extraSignalSpeed;
 
+    [Header("References")]
+    public SignalReceptor PlayerSignalReceiver;
+    [SerializeField] private Transform innerMesh;
+    public GameObject collision;
+
+    [Header("Misc")]
+    private InputSystem_Actions inputSystemActions;
     public Transform currentZone = null;
-    [SerializeField]
-    private Transform innerMesh;
-    [SerializeField]
-    private float speed = 4;
-    private Rigidbody rbody;
+
+    private Rigidbody rb; //hehe
     public bool controlsEnabled = true;
     [SerializeField]
     private Weapon weapon;
@@ -21,12 +26,13 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        weapon.signalReceptor = playerSignalReceiver;
+        rb = GetComponent<Rigidbody>();
+        PlayerSignalReceiver = GetComponentInChildren<SignalReceptor>();
+        weapon.signalReceptor = PlayerSignalReceiver;
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        rbody = GetComponent<Rigidbody>();
         inputSystemActions = new InputSystem_Actions();
         inputSystemActions.Enable();
     }
@@ -41,7 +47,52 @@ public class PlayerController : MonoBehaviour
         return weapon;
     }
 
-    //What in the luney tunes ???????????????????
+    private void Update()
+    {
+        if (controlsEnabled)
+        {
+            HandleRotation();
+            HandleMovement();
+        }
+    }
+    private void FixedUpdate()
+    {
+        HandleCurrentZone();
+        if (controlsEnabled)
+        {
+            HandleMovement();
+
+        }
+    }
+    void HandleMovement()
+    {
+        if (!currentZone)
+            return;
+
+        Vector2 moveDir = inputSystemActions.Player.Move.ReadValue<Vector2>();
+        //Vector2 localMoveDir = currentZone.InverseTransformDirection(moveDir);
+        Vector2 localMoveDir = moveDir;
+
+        //rb.MovePosition(rb.transform.position + new Vector3(localMoveDir.x, localMoveDir.y, 0) * (baseSpeed + PlayerSignalReceiver.ReceptionStrenght * extraSignalSpeed) * Time.fixedDeltaTime);
+        //transform.localPosition += new Vector3(localMoveDir.x, localMoveDir.y, 0) * (baseSpeed + PlayerSignalReceiver.ReceptionStrenght * extraSignalSpeed) * Time.deltaTime;
+        //rb.position = transform.position;
+
+        //need actual physics here if we dont want the player clipping trough walls
+        rb.linearVelocity = new Vector3(localMoveDir.x, localMoveDir.y, 0) * (baseSpeed + PlayerSignalReceiver.ReceptionStrenght * extraSignalSpeed) * Time.fixedDeltaTime;
+    }
+
+    void HandleRotation()
+    {
+        Vector3 mousePos = Mouse.current.position.ReadValue();
+        Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
+        worldMousePos.z = 0;
+
+        Vector3 diff = worldMousePos - transform.position;
+        float angle = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+        innerMesh.transform.eulerAngles = new Vector3(0, 0, angle - 90);
+    }
+
+    //What the hell sure
     void HandleCurrentZone()
     {
         Physics.Raycast(transform.position + Vector3.back * 0.5f, Vector3.forward, out RaycastHit hit, 25, LayerMask.GetMask("Zone"));
@@ -54,40 +105,5 @@ public class PlayerController : MonoBehaviour
                 currentZone = hit.transform.parent;
             }
         }
-    }
-
-    void HandleMovement()
-    {
-        if (!currentZone)
-            return;
-
-        Vector2 moveDir = inputSystemActions.Player.Move.ReadValue<Vector2>();
-        Vector2 localMoveDir = currentZone.InverseTransformDirection(moveDir);
-        transform.localPosition += new Vector3(localMoveDir.x, localMoveDir.y, 0) * speed * Time.deltaTime;
-        rbody.position = transform.position;
-    }
-
-    void HandleRotation()
-    {
-        Vector3 mousePos = Mouse.current.position.ReadValue();
-        Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        worldMousePos.z = 0;
-
-        Vector3 diff = worldMousePos - transform.position;
-        float angle = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        innerMesh.transform.eulerAngles = new Vector3(0, 0, angle - 90);
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        HandleCurrentZone();
-        if (controlsEnabled)
-        {
-            HandleMovement();
-            HandleRotation();
-        }
-
     }
 }
