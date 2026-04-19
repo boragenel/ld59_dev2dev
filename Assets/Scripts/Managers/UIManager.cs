@@ -26,7 +26,7 @@ public class UIManager : MonoBehaviour
     {
         if (PlayerController.Instance == null) return;
 
-        UpdateReceptionVisuals(PlayerController.Instance.PlayerSignalReceiver.ReceptionStrenght);
+        //UpdateReceptionVisuals(PlayerController.Instance.PlayerSignalReceiver.ReceptionStrenght);
     }
 
     public void UpdateReceptionVisuals(float inReception)

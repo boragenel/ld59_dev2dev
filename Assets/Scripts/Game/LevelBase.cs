@@ -1,12 +1,9 @@
-using NUnit.Framework;
 using UnityEngine;
 
-public class LevelBase : MonoBehaviour
-{
+public class LevelBase : MonoBehaviour {
     [ReadOnly] public GameObject levelEntrance;
     [ReadOnly] public Gate levelExit;
     [ReadOnly] public int keyCount = 0;
-    public bool DontRotateOnInit;
 
     private void Awake()
     {

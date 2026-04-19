@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float extraSignalSpeed;
 
     [Header("References")]
-    public SignalReceptor PlayerSignalReceiver;
+    public SignalMeshPointReceiver PlayerSignalReceiver;
     [SerializeField] private Transform innerMesh;
     public GameObject collision;
 
@@ -27,8 +27,8 @@ public class PlayerController : MonoBehaviour
     {
         Instance = this;
         rb = GetComponent<Rigidbody>();
-        PlayerSignalReceiver = GetComponentInChildren<SignalReceptor>();
-        weapon.signalReceptor = PlayerSignalReceiver;
+        PlayerSignalReceiver = GetComponentInChildren<SignalMeshPointReceiver>();
+        weapon.signalMeshReceiver = PlayerSignalReceiver;
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
         //rb.position = transform.position;
 
         //need actual physics here if we dont want the player clipping trough walls
-        rb.linearVelocity = new Vector3(localMoveDir.x, localMoveDir.y, 0) * (baseSpeed + PlayerSignalReceiver.ReceptionStrenght * extraSignalSpeed);
+        rb.linearVelocity = new Vector3(localMoveDir.x, localMoveDir.y, 0) * (baseSpeed + PlayerSignalReceiver.SignalStrength * extraSignalSpeed);
     }
 
     void HandleRotation()

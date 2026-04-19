@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class Weapon : MonoBehaviour
-{
+public class Weapon : MonoBehaviour {
+    private const float maxMeshesForAttackCooldownLerp = 4f;
+
     [Header("Base Attributes")]
     public float noSignalCooldown = 2f;
     public float baseAttackCooldown = 0.5f;
@@ -25,7 +26,7 @@ public class Weapon : MonoBehaviour
 
     //public static UnityAction<float> OnReceptionChanged;
 
-    public SignalReceptor signalReceptor;
+    public SignalMeshPointReceiver signalMeshReceiver;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -81,7 +82,7 @@ public class Weapon : MonoBehaviour
     void Fire()
     {
         //this was feeling really punishing and not great, with the updated way the firerate + signal work just a long cooldown should be fine
-        //if (signalReceptor.ReceptionStrenght == 0)
+        //if (signalMeshReceiver.SignalStrength == 0)
         //    return;
 
         //Reloading + the reception mechanic was not feeling great
@@ -102,19 +103,18 @@ public class Weapon : MonoBehaviour
         //Debug.Log("Yeah");
     }
 
-    public float GetAttackCooldown()
-    {
-        if (signalReceptor.ReceptionStrenght <= 0) return noSignalCooldown;
-
-        return Mathf.Lerp(baseAttackCooldown, maxAttackCooldown, signalReceptor.ReceptionStrenght);
-
-        // return Mathf.Clamp(baseAttackCooldown / signalReceptor.ReceptionStrenght, 0.1f, 1f);
+    public float GetAttackCooldown() {
+        if (signalMeshReceiver == null || signalMeshReceiver.SignalStrength <= 0) {
+            return noSignalCooldown;
+        }
+        float t = Mathf.Clamp01((float)signalMeshReceiver.SignalStrength / maxMeshesForAttackCooldownLerp);
+        return Mathf.Lerp(baseAttackCooldown, maxAttackCooldown, t);
     }
 
-    public float GetReloadSpeed()
-    {
-        if (signalReceptor.ReceptionStrenght == 0)
+    public float GetReloadSpeed() {
+        if (signalMeshReceiver == null || signalMeshReceiver.SignalStrength <= 0) {
             return 0;
-        return baseReloadSpeed / signalReceptor.ReceptionStrenght;
+        }
+        return baseReloadSpeed / signalMeshReceiver.SignalStrength;
     }
 }

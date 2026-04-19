@@ -21,7 +21,7 @@ public enum EnemyType
 public class Enemy : MonoBehaviour
 {
     public EnemyType enemyType;
-    private SignalReceptor signalReceptor;
+    private SignalMeshPointReceiver signalMeshReceiver;
 
     [SerializeField]
     [ReadOnlyAttribute]
@@ -72,7 +72,7 @@ public class Enemy : MonoBehaviour
     {
         currentHP = maxHp;
         rb = GetComponent<Rigidbody>();
-        signalReceptor = GetComponentInChildren<SignalReceptor>();
+        signalMeshReceiver = GetComponentInChildren<SignalMeshPointReceiver>();
 
         switch (enemyType)
         {
@@ -210,7 +210,7 @@ public class Enemy : MonoBehaviour
 
         //i know this is on UPDATE and not on FIXED update but is just setting the velocity of the RB so it should be fiiiiiiiiiinne?
         //Also it NEEDS fixed delta time so we can maybe speed up the game later as a endless thing and or switch the frequency of fixed delta time
-        rb.linearVelocity = targetDir.normalized * ((chasingPlayer ? chaseSpeed : baseSpeed) + signalReceptor.ReceptionStrenght * extraSgnalSpeed);
+        rb.linearVelocity = targetDir.normalized * ((chasingPlayer ? chaseSpeed : baseSpeed) + (signalMeshReceiver != null ? signalMeshReceiver.SignalStrength : 0) * extraSgnalSpeed);
     }
 
     void RotateTowardsTarget()

@@ -42,9 +42,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 865337819768341379}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f7adcf4aceab164d92655c4a6e874b7, type: 3}
+  m_Script: {fileID: 11500000, guid: c4f91e2b8a6d4e1f9b0c3d5e7f8a9b0c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SignalReceptor
+  m_EditorClassIdentifier: Assembly-CSharp::SignalMeshPointReceiver
 --- !u!135 &4052378559484586277
 SphereCollider:
   m_ObjectHideFlags: 0

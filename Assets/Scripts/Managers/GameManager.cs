@@ -7,13 +7,13 @@ using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
-public enum GamePhase
-{
+public enum GamePhase {
     NONE,
     CUTSCENE,
     LOADOUT,
     SHOP,
-    GAMEPLAY
+    GAMEPLAY,
+    BUILDING,
 }
 
 public class GameManager : MonoBehaviour
@@ -78,14 +78,40 @@ public class GameManager : MonoBehaviour
         return currentGamePhase;
     }
 
-    public void ChangeGameState(GamePhase newGamePhase)
-    {
+    public void ChangeGameState(GamePhase newGamePhase) {
         currentGamePhase = newGamePhase;
-
-        switch (currentGamePhase)
-        {
-            case GamePhase.GAMEPLAY:
+        switch (currentGamePhase) {
+            case GamePhase.BUILDING:
+                BuildManager.Instance?.SetBuildModeEnabled(true);
+                SetPlayerBuildLocked(true);
                 break;
+            case GamePhase.GAMEPLAY:
+                BuildManager.Instance?.SetBuildModeEnabled(false);
+                SetPlayerBuildLocked(false);
+                break;
+            default:
+                BuildManager.Instance?.SetBuildModeEnabled(false);
+                break;
+        }
+    }
+
+    public void BeginGameplayFromBuild() {
+        ChangeGameState(GamePhase.GAMEPLAY);
+    }
+
+    private void SetPlayerBuildLocked(bool lockedForBuild) {
+        if (player == null) {
+            player = PlayerController.Instance;
+        }
+        if (player == null) {
+            return;
+        }
+        player.controlsEnabled = !lockedForBuild;
+        if (lockedForBuild) {
+            Rigidbody rb = player.GetComponent<Rigidbody>();
+            if (rb != null) {
+                rb.linearVelocity = Vector3.zero;
+            }
         }
     }
 
@@ -101,10 +127,8 @@ public class GameManager : MonoBehaviour
         currentLevel = LevelOrderPrefabs[0];
         currentLevel = Instantiate(currentLevel.gameObject).GetComponent<LevelBase>();
 
-        if (!currentLevel.DontRotateOnInit)
-            currentLevel.transform.localRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
-
         PlayerController.Instance.gameObject.SetActive(true);
+        ChangeGameState(GamePhase.BUILDING);
         SetPlayerToStartPos();
         GameManager.Instance.isTransitioning = false;
     }
@@ -146,10 +170,9 @@ public class GameManager : MonoBehaviour
             Vector3 pos = entranceGate.position;
             pos.z = 0;
             pc.transform.position = pos;
-            pc.transform.DOScale(1f, 0.25f).OnComplete(() =>
-            {
+            pc.transform.DOScale(1f, 0.25f).OnComplete(() => {
                 GameManager.Instance.isTransitioning = false;
-                pc.controlsEnabled = true;
+                pc.controlsEnabled = GameManager.Instance != null && GameManager.Instance.GetCurrentGamePhase() == GamePhase.GAMEPLAY;
                 pc.collision.SetActive(true);
                 pos = pc.transform.localPosition;
                 pos.z = 0;

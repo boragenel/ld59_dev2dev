@@ -239,7 +239,7 @@ MonoBehaviour:
   currentHP: 0
   baseSpeed: 1.25
   chaseSpeed: 1.75
-  extraSgnalSpeed: 2.75
+  extraSgnalSpeed: 0.6875
   rotSpeed: 1200
   needsDirectSight: 1
   sightConeRadius: 360

@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   baseSpeed: 3
-  extraSignalSpeed: 3
+  extraSignalSpeed: 0.75
   PlayerSignalReceiver: {fileID: 0}
   innerMesh: {fileID: 7292338365526679062}
   collision: {fileID: 5199030715646896422}
@@ -5123,7 +5123,7 @@ MonoBehaviour:
   baseMagazineSize: 8
   PS: {fileID: 5658455996466259643}
   bulletOrigin: {fileID: 4222701555316823932}
-  signalReceptor: {fileID: 0}
+  signalMeshReceiver: {fileID: 0}
 --- !u!1 &5199030715646896422
 GameObject:
   m_ObjectHideFlags: 0

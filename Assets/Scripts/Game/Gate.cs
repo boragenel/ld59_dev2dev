@@ -39,9 +39,6 @@ public class Gate : MonoBehaviour
 
             GameManager.Instance.currentLevel = levelTo.GetComponent<LevelBase>();
 
-            if (!GameManager.Instance.currentLevel.DontRotateOnInit)
-                GameManager.Instance.currentLevel.transform.localRotation = Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f));
-
             PlayerController pc = other.GetComponentInParent<PlayerController>();
             pc.collision.SetActive(false);
             pc.controlsEnabled = false;
@@ -65,8 +62,8 @@ public class Gate : MonoBehaviour
 
             levelTo.SetActive(true);
             levelTo.transform.localScale = Vector3.one * 0.01f;
-            levelTo.transform.DOScale(1f, 0.5f).OnComplete(() =>
-            {
+            levelTo.transform.DOScale(1f, 0.5f).OnComplete(() => {
+                GameManager.Instance.ChangeGameState(GamePhase.BUILDING);
                 GameManager.Instance.SetPlayerToStartPos();
             });
 
