@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,9 +20,8 @@ public enum EnemyType
 
 public class Enemy : MonoBehaviour
 {
-
-    public float moveSpeed = 4;
     public EnemyType enemyType;
+    private SignalReceptor signalReceptor;
 
     [SerializeField]
     [ReadOnlyAttribute]
@@ -32,13 +32,22 @@ public class Enemy : MonoBehaviour
 
     public float idleTimer = 0f;
 
-    private Rigidbody rbody;
+    private Rigidbody rb; //hehe
 
-    [Header("Setup")] 
+    [Header("Speed")]
+    public float maxHp;
+    public float currentHP;
+
+    [Header("Speed")]
+    public float baseSpeed;
+    public float chaseSpeed;
+    public float extraSgnalSpeed;
+    public float rotSpeed;
+
+    [Header("Setup")]
     public bool needsDirectSight = true;
     public float sightConeRadius = 3f;
-    public float chaseSpeedMult = 1.5f;
-    
+
     [Header("Dynamics")]
     private bool chasingPlayer = false;
     private float losePlayerTimer = 0f;
@@ -46,8 +55,7 @@ public class Enemy : MonoBehaviour
     private Vector3 targetDir;
     private float patrolGiveupTimer = 0f;
 
-
-    [Header("Local Avoidance")] 
+    [Header("Local Avoidance")]
     public float avoidanceCheckDistance = 0.8f;
     public LayerMask avoidanceMask;
     public Vector3 avoidanceDir = Vector3.zero;
@@ -55,12 +63,17 @@ public class Enemy : MonoBehaviour
 
     public float avoidanceCooldown;
     //private float avoidance
-    
-    
+
+    //Pomo notes
+    //I tried cleaning this up a bit to work with physics, not gonna have time to fully polish it unfortunetly, might be good enough as is but well see
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        rbody = GetComponent<Rigidbody>();
+        currentHP = maxHp;
+        rb = GetComponent<Rigidbody>();
+        signalReceptor = GetComponentInChildren<SignalReceptor>();
+
         switch (enemyType)
         {
             case EnemyType.BASIC_ENEMY:
@@ -69,18 +82,29 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    public void TakeDamage(float damage)
+    {
+        currentHP -= damage;
+        if (currentHP <= 0)
+        {
+            Die();
+        }
+    }
+    public void Die()
+    {
+        Destroy(gameObject);
+    }
+
     void Update()
     {
         if (stunTimer > 0)
         {
             stunTimer -= Time.deltaTime;
         }
-        //HandleCurrentZone();
+        //dsnt the enemy need this back on?
+        HandleCurrentZone(); 
         HandlePerception();
         HandleCurrentState();
-        
-
     }
 
     public AIState GetCurrentState()
@@ -91,6 +115,7 @@ public class Enemy : MonoBehaviour
     public void PickTargetDestinationRandomly()
     {
         targetDestination = transform.localPosition + (Vector3)Random.insideUnitCircle * 3f;
+        targetDestination.z = transform.position.z;
     }
 
     public void ChangeState(AIState newState)
@@ -131,10 +156,11 @@ public class Enemy : MonoBehaviour
                     PickTargetDestinationRandomly();
                     patrolGiveupTimer = 0;
                 }
-                
-                Vector3 diff = targetDestination - transform.localPosition;
-                Vector3 worldDir = transform.parent.TransformDirection(diff);
-                
+
+                Vector3 diff = targetDestination - transform.position;
+                //Vector3 worldDir = transform.parent.TransformDirection(diff);
+                Vector3 worldDir = diff.normalized;
+
                 if (worldDir.sqrMagnitude > 1f)
                 {
                     worldDir.z = 0;
@@ -147,9 +173,12 @@ public class Enemy : MonoBehaviour
                 }
                 break;
             case AIState.CHASE_PLAYER:
-                targetDestination = transform.parent.InverseTransformPoint(GameManager.Instance.player.transform.position);
-                Vector3 diff2 = (targetDestination - transform.localPosition);
-                Vector3 worldDirection2 = transform.parent.TransformDirection(diff2);
+                //targetDestination = transform.parent.InverseTransformPoint(GameManager.Instance.player.transform.position);
+                targetDestination = GameManager.Instance.player.transform.position;
+                Vector3 diff2 = (targetDestination - transform.position);
+                //Vector3 worldDirection2 = transform.parent.TransformDirection(diff2);
+                Vector3 worldDirection2 = diff2.normalized;
+                worldDirection2.z = 0;
                 targetDir = worldDirection2;
                 MoveTowardsDirection();
                 break;
@@ -163,40 +192,52 @@ public class Enemy : MonoBehaviour
             return;
 
         RotateTowardsTarget();
-        
-        float mult = 1f;
-        if (chasingPlayer)
+
+        //float mult = 1f;
+        //if (chasingPlayer)
+        //{
+        //    mult = chaseSpeedMult;
+        //}
+
+        //transform.position += targetDir.normalized * moveSpeed * mult * Time.deltaTime;
+        //rb.position = transform.position;
+
+        if (targetDir.sqrMagnitude < 0.0001f)
         {
-            mult = chaseSpeedMult;
+            rb.linearVelocity = Vector3.zero;
+            return;
         }
-        
-        transform.position += targetDir.normalized * moveSpeed * mult * Time.deltaTime;
-        rbody.position = transform.position;
+
+        //i know this is on UPDATE and not on FIXED update but is just setting the velocity of the RB so it should be fiiiiiiiiiinne?
+        //Also it NEEDS fixed delta time so we can maybe speed up the game later as a endless thing and or switch the frequency of fixed delta time
+        rb.linearVelocity = targetDir.normalized * ((chasingPlayer ? chaseSpeed : baseSpeed) + signalReceptor.ReceptionStrenght * extraSgnalSpeed);
     }
 
     void RotateTowardsTarget()
     {
         //Debug.Log("RotateTowardsTarget");
-        HandleLocalAvoidance();
-        
+
+        //This was causing some weird issues so i turned it off for now until we get the game feeling better
+        //HandleLocalAvoidance();
+
         Quaternion rot = transform.rotation;
         transform.up = targetDir;
-        transform.rotation = Quaternion.Slerp(rot,transform.rotation, Time.deltaTime * 5f);
+        transform.rotation = Quaternion.Slerp(rot, transform.rotation, Time.deltaTime * 5f);
     }
-    
 
+    //This was causing some weird issues so i turned it off for now until we get the game feeling better
     void HandleLocalAvoidance()
     {
         //Debug.Log("HandleLocalAvoidance");
         avoidanceCooldown -= Time.deltaTime;
-        
+
         RaycastHit[] collisions = new RaycastHit[10];
-        Physics.SphereCastNonAlloc(transform.position,0.25f,transform.up, collisions, avoidanceCheckDistance, avoidanceMask);
-        foreach(RaycastHit hit in collisions)
+        Physics.SphereCastNonAlloc(transform.position, 0.25f, transform.up, collisions, avoidanceCheckDistance, avoidanceMask);
+        foreach (RaycastHit hit in collisions)
         {
             if (hit.collider == null)
                 continue;
-            
+
             if (hit.collider.gameObject == gameObject)
             {
                 continue;
@@ -207,17 +248,14 @@ public class Enemy : MonoBehaviour
                 avoidanceTargetDir = hit.normal;
                 avoidanceCooldown = 0.5f;
             }
-            
-            
-            float rotSpeed = 600f;
-            Quaternion targetRot = Quaternion.LookRotation(transform.forward,avoidanceTargetDir);
+
+            Quaternion targetRot = Quaternion.LookRotation(transform.forward, avoidanceTargetDir);
             Quaternion rot = Quaternion.RotateTowards(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
             targetDir = rot * Vector3.up;
             break;
-
         }
     }
-    
+
     void DecideIdleExitAction()
     {
         switch (enemyType)
@@ -231,8 +269,8 @@ public class Enemy : MonoBehaviour
     void HandlePerception()
     {
         bool playerInSight = !needsDirectSight;
-        
-        bool playerInVicinity = Physics.CheckSphere(transform.position + transform.up * sightConeRadius* 0.5f , sightConeRadius, LayerMask.GetMask("Player"));
+
+        bool playerInVicinity = Physics.CheckSphere(transform.position + transform.up * sightConeRadius * 0.5f, sightConeRadius, LayerMask.GetMask("Player"));
 
         if (playerInVicinity && needsDirectSight)
         {
@@ -259,20 +297,20 @@ public class Enemy : MonoBehaviour
                 ChangeState(AIState.IDLE);
             }
         }
-        
+
     }
-    
+
     void HandleCurrentZone()
     {
-        Physics.Raycast(transform.position+Vector3.back*0.5f, Vector3.forward, out RaycastHit hit, 25, LayerMask.GetMask("Zone"));
+        Physics.Raycast(transform.position + Vector3.back * 0.5f, Vector3.forward, out RaycastHit hit, 25, LayerMask.GetMask("Zone"));
         if (hit.collider != null)
         {
             if (transform.parent != hit.transform.parent)
             {
-                transform.SetParent(hit.transform.parent,true);
+                transform.SetParent(hit.transform.parent, true);
             }
         }
     }
 
-    
+
 }

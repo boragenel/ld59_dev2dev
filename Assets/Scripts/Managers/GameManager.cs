@@ -1,5 +1,7 @@
+using DG.Tweening;
 using NUnit.Framework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -38,7 +40,8 @@ public class GameManager : MonoBehaviour
     ///
     /// EVENTS
     public static UnityAction OnLevelFailed;
-    public static UnityAction OnLevelComplete;
+    public static UnityAction OnLevelCompleted;
+    public static UnityAction OnLevelClear;
 
     [Header("Levels")]
     public List<LevelBase> LevelOrderPrefabs;
@@ -89,10 +92,21 @@ public class GameManager : MonoBehaviour
     #region Level Handling
     public void StartNewGame()
     {
+        if (currentLevel != null)
+        {
+            Destroy(currentLevel.gameObject);
+        }
+
         currentLevelIndex = 0;
         currentLevel = LevelOrderPrefabs[0];
         currentLevel = Instantiate(currentLevel.gameObject).GetComponent<LevelBase>();
-        // StartLevel();
+
+        if (!currentLevel.DontRotateOnInit)
+            currentLevel.transform.localRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+
+        PlayerController.Instance.gameObject.SetActive(true);
+        SetPlayerToStartPos();
+        GameManager.Instance.isTransitioning = false;
     }
     public GameObject GetNextLevelPrefab()
     {
@@ -106,6 +120,47 @@ public class GameManager : MonoBehaviour
     public void SetPlayerOnEntranceGate()
     {
 
+    }
+    public void TriggerGameOverSequence()
+    {
+        Debug.Log("GAME OVER");
+        StartCoroutine(GameOverSequence());
+        IEnumerator GameOverSequence()
+        {
+            PlayerController.Instance.gameObject.SetActive(false);
+            PlayerController.Instance.transform.SetParent(null, true);
+            GameManager.Instance.isTransitioning = true;
+            GameManager.OnLevelClear?.Invoke();
+            //put destruction effects here, time delay, loading screen, idfks
+            yield return new WaitForSecondsRealtime(0.5f);
+            StartNewGame();
+        }
+    }
+
+    public void SetPlayerToStartPos()
+    {
+        Transform entranceGate = GameManager.Instance.currentLevel.levelEntrance.transform;
+        PlayerController pc = PlayerController.Instance;
+        if (entranceGate)
+        {
+            Vector3 pos = entranceGate.position;
+            pos.z = 0;
+            pc.transform.position = pos;
+            pc.transform.DOScale(1f, 0.25f).OnComplete(() =>
+            {
+                GameManager.Instance.isTransitioning = false;
+                pc.controlsEnabled = true;
+                pc.collision.SetActive(true);
+                pos = pc.transform.localPosition;
+                pos.z = 0;
+                pc.transform.localPosition = pos;
+                entranceGate.DOScale(0, 0.5f).SetDelay(0.4f);
+            });
+        }
+        else
+        {
+            Debug.LogError("Entrance gate not found");
+        }
     }
     #endregion
 }

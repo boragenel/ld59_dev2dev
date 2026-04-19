@@ -5,10 +5,13 @@ using UnityEngine.Events;
 //cant name it signal receiver lol thats a unity class
 public class SignalReceptor : MonoBehaviour
 {
+    public Color startColor;
+    public Color endColor;
     private List<SignalSource> signalSources = new List<SignalSource>();
     private List<SignalSource> expectedSignalLoss = new List<SignalSource>();
 
-    [ReadOnlyAttribute] private float receptionStrenght = 0f;
+    [SerializeField, ReadOnly] private float receptionStrenght = 0f;
+
     private float prevReception = 0f;
 
     public UnityAction<float> OnReceptionChanged;
@@ -35,6 +38,8 @@ public class SignalReceptor : MonoBehaviour
         {
             Vector3 diff = signalSource.transform.position - transform.position;
             float dist = diff.magnitude;
+            dist -= signalSource.signalSourceSize; //this is to account for the size of the signalsources
+            dist = Mathf.Max(0, dist); // ensure distance doesn't go negative after accounting for signal source size
             float signalGain = 1 - ((dist) / (signalSource.maxSignalRadius));
 
             if (dist > signalSource.maxSignalRadius)
@@ -47,6 +52,9 @@ public class SignalReceptor : MonoBehaviour
                 ReceptionStrenght += signalGain;
             }
         }
+
+        //clamping for now but can remove this later for super saying stuff
+        receptionStrenght = Mathf.Clamp01(receptionStrenght);
 
         if (prevReception != ReceptionStrenght)
         {

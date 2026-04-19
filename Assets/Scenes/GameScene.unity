@@ -1394,7 +1394,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 595825430}
   m_CullTransparentMesh: 1
---- !u!1 &696646773
+--- !u!1 &639496433
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1402,24 +1402,24 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 696646774}
+  - component: {fileID: 639496434}
   m_Layer: 0
-  m_Name: Levels
+  m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &696646774
+--- !u!4 &639496434
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 696646773}
+  m_GameObject: {fileID: 639496433}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.24604, y: -0.20295, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1457,7 +1457,7 @@ MonoBehaviour:
   poolPopulationConfig:
   - poolerType: 2
     component: {fileID: 555100331031311868, guid: ce3b9001118e8d34ba1bf32b23b00afc, type: 3}
-    poolAmount: 50
+    poolAmount: 10
   - poolerType: 3
     component: {fileID: 763331936313339977, guid: 0d357b19df18dac4d88a09d3a3ee146b, type: 3}
     poolAmount: 10
@@ -3731,6 +3731,7 @@ MonoBehaviour:
   LevelOrderPrefabs:
   - {fileID: 378678611591577018, guid: 2d10d95c43c1ab64f90d46870396a7c4, type: 3}
   - {fileID: 7475852346799759515, guid: 81c5c811b1967c044b20e61d7b96dfee, type: 3}
+  - {fileID: 649891764021861945, guid: 7fcbc18c04045884180a02ae9cd2a53e, type: 3}
   currentLevelIndex: 0
   currentLevel: {fileID: 0}
 --- !u!4 &1931737588
@@ -4057,33 +4058,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 308405115646712137, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
-      propertyPath: baseSpeed
-      value: 125
-      objectReference: {fileID: 0}
-    - target: {fileID: 308405115646712137, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
-      propertyPath: extraSignalSpeed
-      value: 100
-      objectReference: {fileID: 0}
     - target: {fileID: 1902373648082975354, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 1902373648082975354, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4315473382721264622, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
-      propertyPath: m_IsKinematic
+    - target: {fileID: 7356941901141503952, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
+      propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7356941901141503952, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -2.62
-      objectReference: {fileID: 0}
-    - target: {fileID: 7356941901141503952, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.56
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7356941901141503952, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4136,5 +4121,5 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 1090607126}
   - {fileID: 1877579088}
-  - {fileID: 696646774}
   - {fileID: 1477410396889238585}
+  - {fileID: 639496434}

@@ -1,16 +1,28 @@
+using NUnit.Framework;
 using UnityEngine;
 
 public class LevelBase : MonoBehaviour
 {
     [ReadOnly] public GameObject levelEntrance;
-    [ReadOnly] public GameObject levelExit; //for maybe having to do stuff to unlock exit?
-
+    [ReadOnly] public Gate levelExit;
+    [ReadOnly] public int keyCount = 0;
+    public bool DontRotateOnInit;
 
     private void Awake()
     {
+        keyCount = GetComponentsInChildren<CollectableKey>()?.Length ?? 0;
+
         levelEntrance = FindDeepChild(transform, "EntranceGate")?.gameObject;
-        levelExit = FindDeepChild(transform, "ExitGate")?.gameObject;
+        levelExit = GetComponentInChildren<Gate>();
+
+        if (keyCount > 0) levelExit.LockGate();
     }
+    public void OnCollectKey()
+    {
+        keyCount--;
+        if (keyCount <= 0) levelExit.UnlockGate();
+    }
+
     public static Transform FindDeepChild(Transform parent, string name)
     {
         foreach (Transform child in parent)

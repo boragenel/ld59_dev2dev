@@ -5,12 +5,19 @@ using UnityEngine;
 
 public class Gate : MonoBehaviour
 {
+    public GameObject particle;
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    bool isLocked;
+    public void LockGate()
     {
+        isLocked = true;
+        particle.SetActive(false);
+    }
 
+    public void UnlockGate()
+    {
+        isLocked = false;
+        particle.SetActive(true);
     }
 
     // Update is called once per frame
@@ -21,15 +28,19 @@ public class Gate : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (isLocked) return;
         if (other.CompareTag("Player"))
         {
-            GameManager.OnLevelComplete?.Invoke();
+            GameManager.OnLevelClear?.Invoke();
+            GameManager.Instance.isTransitioning = true;
 
             GameObject levelFrom = GameManager.Instance.currentLevel.gameObject;
             GameObject levelTo = Instantiate(GameManager.Instance.GetNextLevelPrefab());
 
             GameManager.Instance.currentLevel = levelTo.GetComponent<LevelBase>();
-            GameManager.Instance.isTransitioning = true;
+
+            if (!GameManager.Instance.currentLevel.DontRotateOnInit)
+                GameManager.Instance.currentLevel.transform.localRotation = Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f));
 
             PlayerController pc = other.GetComponentInParent<PlayerController>();
             pc.collision.SetActive(false);
@@ -38,38 +49,25 @@ public class Gate : MonoBehaviour
             pc.PlayerSignalReceiver.ResetSources();
             pc.transform.DOScale(0, 0.15f);
             levelFrom.transform.position += Vector3.forward * 30;
-            levelFrom.transform.DOScale(1.25f, 0.5f).OnComplete(() =>
+            //levelFrom.transform.DOScale(1.25f, 0.5f).OnComplete(() =>
+            //{
+            //    levelFrom.transform.DOScale(0, 1f).OnComplete(() =>
+            //    {
+            //        levelFrom.gameObject.SetActive(false);
+            //        Destroy(levelFrom);
+            //    });
+            //});
+            levelFrom.transform.DOScale(0, 1f).OnComplete(() =>
             {
-                levelFrom.transform.DOScale(0, 1f).OnComplete(() =>
-                {
-                    levelFrom.gameObject.SetActive(false);
-                    Destroy(levelFrom);
-                });
+                levelFrom.gameObject.SetActive(false);
+                Destroy(levelFrom);
             });
 
             levelTo.SetActive(true);
             levelTo.transform.localScale = Vector3.one * 0.01f;
             levelTo.transform.DOScale(1f, 0.5f).OnComplete(() =>
             {
-                Transform entranceGate = GameManager.Instance.currentLevel.levelEntrance.transform;
-                if (entranceGate)
-                {
-                    Vector3 pos = entranceGate.position;
-                    pos.z = 0;
-                    pc.transform.position = pos;
-                    pc.transform.DOScale(1f, 0.25f).OnComplete(() =>
-                    {
-                        GameManager.Instance.isTransitioning = false;
-                        pc.controlsEnabled = true;
-                        pc.collision.SetActive(true);
-                        entranceGate.DOScale(0, 0.5f).SetDelay(0.4f);
-                    });
-                }
-                else
-                {
-                    Debug.LogError("Entrance gate not found");
-                }
-
+                GameManager.Instance.SetPlayerToStartPos();
             });
 
 

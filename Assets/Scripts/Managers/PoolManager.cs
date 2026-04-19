@@ -42,8 +42,9 @@ public class PoolManager : MonoBehaviour
 
     public static void EnqueueObject<T>(T item, PoolerType pType) where T : Component
     {
-        if (!item.gameObject.activeSelf)
-            return;
+        //this was causing some endless items to be created cause they got turned off before being requeued
+        //if (!item.gameObject.activeSelf)
+        //    return;
 
         item.transform.position = Vector3.zero;
         poolDictionary[pType].Enqueue(item);

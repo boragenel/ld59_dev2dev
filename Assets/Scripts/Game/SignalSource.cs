@@ -14,6 +14,7 @@ public class SignalSource : MonoBehaviour
     [Header("Setup")]
     public float maxSignalRadius;
     public bool isUnblockableSignal;
+    public float signalSourceSize = 0.2f;
     //TODO Add visual indicator for signal radius, semi transparent circle?
 
     [SerializeField]
@@ -46,7 +47,7 @@ public class SignalSource : MonoBehaviour
     //}
     private void Awake()
     {
-        GameManager.OnLevelComplete += OnLevelClear;
+        GameManager.OnLevelClear += OnLevelClear;
     }
     void FixedUpdate()
     {
@@ -116,21 +117,27 @@ public class SignalSource : MonoBehaviour
 
         float power = ((maxSignalRadius - dist) / maxSignalRadius);
         renderer.lineRenderer.SetPosition(1, signalReceiver.position);
-        Color cStart = renderer.lineRenderer.startColor;
+
+        // Color cStart = renderer.lineRenderer.startColor;
+        Color cStart = receiver.startColor;
+
         cStart.a = 0.6f * power;
         renderer.lineRenderer.startColor = cStart;
 
-        Color cEnd = renderer.lineRenderer.endColor;
+        // Color cEnd = renderer.lineRenderer.endColor;
+        Color cEnd = receiver.endColor;
+
         cEnd.a = 0.2f * power;
         renderer.lineRenderer.endColor = cEnd;
         //renderer.lineRenderer.colorGradient.alphaKeys[1].time = ((maxSignalRadius - dist) / maxSignalRadius);
     }
     private void OnLevelClear()
     {
-        Debug.Log("CLEAR");
-        GameManager.OnLevelComplete -= OnLevelClear;
+        GameManager.OnLevelClear -= OnLevelClear;
         foreach (SignalRenderer signalRenderer in signalRenderers.Values)
         {
+            if (signalRenderer == null) continue; //idk
+
             signalRenderer.gameObject.SetActive(false);
             PoolManager.EnqueueObject(signalRenderer, PoolerType.SIGNAL_RENDERER);
         }

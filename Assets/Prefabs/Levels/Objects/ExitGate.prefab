@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8623520746429776653}
+  - component: {fileID: 4762539330556394778}
   - component: {fileID: 448299519985252660}
   - component: {fileID: 6430561793398878496}
   - component: {fileID: 3077808991159694787}
-  - component: {fileID: 4762539330556394778}
   m_Layer: 0
   m_Name: ExitGate
   m_TagString: Untagged
@@ -37,6 +37,19 @@ Transform:
   - {fileID: 1448909792072363893}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4762539330556394778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1507810670804353656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32354064ad5ed1f4f854cd5efedc667f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  particle: {fileID: 7878572457100966181}
 --- !u!33 &448299519985252660
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -115,20 +128,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.12
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4762539330556394778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1507810670804353656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32354064ad5ed1f4f854cd5efedc667f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  levelFrom: {fileID: 0}
-  levelTo: {fileID: 0}
 --- !u!1 &7878572457100966181
 GameObject:
   m_ObjectHideFlags: 0

@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
         //rb.position = transform.position;
 
         //need actual physics here if we dont want the player clipping trough walls
-        rb.linearVelocity = new Vector3(localMoveDir.x, localMoveDir.y, 0) * (baseSpeed + PlayerSignalReceiver.ReceptionStrenght * extraSignalSpeed) * Time.fixedDeltaTime;
+        rb.linearVelocity = new Vector3(localMoveDir.x, localMoveDir.y, 0) * (baseSpeed + PlayerSignalReceiver.ReceptionStrenght * extraSignalSpeed);
     }
 
     void HandleRotation()
@@ -104,6 +104,18 @@ public class PlayerController : MonoBehaviour
                 transform.SetParent(hit.transform.parent, true);
                 currentZone = hit.transform.parent;
             }
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            var enemy = collision.gameObject.GetComponentInParent<Enemy>();
+            if (enemy != null)
+                Destroy(enemy.gameObject);
+
+            GameManager.Instance.TriggerGameOverSequence();
         }
     }
 }
