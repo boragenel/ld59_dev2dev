@@ -57,8 +57,8 @@ MonoBehaviour:
   player: {fileID: 0}
   transitionDepths: {fileID: 0}
   LevelOrderPrefabs:
-  - {fileID: 7475852346799759515, guid: 81c5c811b1967c044b20e61d7b96dfee, type: 3}
   - {fileID: 378678611591577018, guid: 2d10d95c43c1ab64f90d46870396a7c4, type: 3}
+  - {fileID: 7475852346799759515, guid: 81c5c811b1967c044b20e61d7b96dfee, type: 3}
   - {fileID: 7475852346799759515, guid: b15d563d319635747b3425859da19273, type: 3}
   - {fileID: 378678611591577018, guid: 97c1352522c4a40429fcd9af013f771e, type: 3}
   - {fileID: 7475852346799759515, guid: 0d49a521a3ec7154f8018abd655dd7ab, type: 3}
