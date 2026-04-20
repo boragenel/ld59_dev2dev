@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -87,8 +88,16 @@ public class Enemy : MonoBehaviour
                 break;
         }
         
+        Invoke("ResetScale",0.5f); // temp fix
+        
     }
 
+    public void ResetScale()
+    {
+        transform.DOKill();
+        transform.DOScale(1f, 0.25f);
+    }
+    
     void Update()
     {
         if (stunTimer > 0f)
@@ -118,12 +127,14 @@ public class Enemy : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance.PlayOneShot(SoundType.ENEMY_HIT,0.5f,Random.Range(0.8f,1.2f));
             ChangeState(AIState.CHASE_PLAYER);
         }
     }
 
     public void Die()
     {
+        SoundManager.Instance.PlayOneShot(SoundType.ENEMY_DEATH,0.5f,Random.Range(0.8f,1.2f));
         Destroy(gameObject);
     }
 

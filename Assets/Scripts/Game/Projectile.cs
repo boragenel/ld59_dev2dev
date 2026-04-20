@@ -63,6 +63,7 @@ public class Projectile : MonoBehaviour
             }
             //Debug.Log("Projectile death");
             PoolManager.EnqueueObject(this, PoolerType.PLAYER_BULLET);
+            SoundManager.Instance.PlayOneShot(SoundType.BULLET_BOUNCE,0.1f,Random.Range(0.7f,1.3f));
         }
     }
 

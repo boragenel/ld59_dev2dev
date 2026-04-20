@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
@@ -152,6 +153,7 @@ public class PlayerController : MonoBehaviour
             if (enemy != null)
                 Destroy(enemy.gameObject);
 
+            Death();
             GameManager.Instance.TriggerGameOverSequence();
         } 
     }
@@ -161,8 +163,17 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Sawblade"))
         {
             var sawblade = other.GetComponentInParent<Sawblade>();
-            if(sawblade && sawblade.isOn)
+            if (sawblade && sawblade.isOn)
+            {
                 GameManager.Instance.TriggerGameOverSequence();
+                Death();
+            }
+                
         }
+    }
+
+    public void Death()
+    {
+        SoundManager.Instance.PlayOneShot(SoundType.PLAYER_DEATH,0.5f,Random.Range(0.8f,1.2f));
     }
 }

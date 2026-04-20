@@ -24,7 +24,8 @@ public class Door : MonoBehaviour {
     private bool lastOpen;
     private Tweener tween1;
     private Tweener tween2;
-
+    private float noSoundTimer = 2f;
+    
     private void Awake() {
         CacheClosedPositions();
     }
@@ -60,6 +61,7 @@ public class Door : MonoBehaviour {
         if (isOpen != lastOpen) {
             TweenToCurrentState();
         }
+        noSoundTimer -= Time.deltaTime;
     }
 
     private void OnDestroy() {
@@ -87,6 +89,8 @@ public class Door : MonoBehaviour {
         tween2 = box2.DOLocalMove(t2, dur).SetEase(Ease.InOutQuad).SetLink(gameObject);
         lastOpen = isOpen;
 
+        if (noSoundTimer > 0)
+            return;
         if (lastOpen)
         {
             SoundManager.Instance.PlayOneShot(SoundType.DOORS_OPEN,0.4f,Random.Range(0.9f,1.1f));

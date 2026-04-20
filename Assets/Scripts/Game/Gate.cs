@@ -31,6 +31,7 @@ public class Gate : MonoBehaviour
         if (isLocked) return;
         if (other.CompareTag("Player"))
         {
+            SoundManager.Instance.PlayOneShot(SoundType.TRANSITION, 0.7f);
             GameManager.OnLevelClear?.Invoke();
             GameManager.Instance.isTransitioning = true;
             GameManager.Instance.PlaySignalLosFadeOut();
@@ -72,7 +73,9 @@ public class Gate : MonoBehaviour
 
             levelTo.SetActive(true);
             levelTo.transform.localScale = Vector3.one * 0.01f;
-            levelTo.transform.DOScale(1f, 1f).OnComplete(() => {
+            levelTo.transform.DOScale(1f, 1f).OnComplete(() =>
+            {
+                Camera.main.transform.DOShakePosition(0.25f, Vector3.one * 0.25f, 20);
                 GameManager.Instance.SetPlayerToStartPos();
             });
 
