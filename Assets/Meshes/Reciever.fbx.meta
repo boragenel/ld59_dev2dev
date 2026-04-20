@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Reciever
-    second: {fileID: 2100000, guid: 1b5f64aa871351b4a931402fcf127f43, type: 2}
+    second: {fileID: 2100000, guid: b2c6ab87c4fc2344e9f3faf9cb076793, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
