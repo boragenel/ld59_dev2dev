@@ -11,7 +11,7 @@ public class SignalMeshPointReceiver : MonoBehaviour {
     //private List<SignalRenderer> signalRenderers = new List<SignalRenderer>();
     public float SignalStrength;
     public bool affectMusic = false;
-    public bool isOn = true;
+    public bool isOn = false;
     public Animator animator;
 
     public event Action<int> OnSignalStrengthChanged;

@@ -49,7 +49,7 @@ MonoBehaviour:
   preciseSignalStrength: 0
   SignalStrength: 0
   affectMusic: 0
-  isOn: 1
+  isOn: 0
   animator: {fileID: 1693220151201055651}
 --- !u!1001 &6320434119042080282
 PrefabInstance:
