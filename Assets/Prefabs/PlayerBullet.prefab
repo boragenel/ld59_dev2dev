@@ -47,6 +47,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   behaviourType: 1
+  hitVfx:
+    vfxPrefab: {fileID: 8304642207760720592, guid: 3fd96a734551c59418698d8fb51bb19a, type: 3}
+    destroyDelay: 1
   speed: 6
   damage: 1
   enemySearchRadius: 0.1

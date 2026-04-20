@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4793388607392365565}
   - component: {fileID: 5590507139297545823}
   - component: {fileID: 8555305539820067190}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: BulletExplosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,7 +48,7 @@ ParticleSystem:
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0

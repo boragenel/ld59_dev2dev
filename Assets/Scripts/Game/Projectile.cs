@@ -12,6 +12,7 @@ public enum ProjectileBehaviourType
 public class Projectile : MonoBehaviour
 {
     public ProjectileBehaviourType behaviourType;
+    public VfxInstancer hitVfx;
 
     public float speed = 4f;
     public float damage = 1f;
@@ -62,6 +63,10 @@ public class Projectile : MonoBehaviour
                 }
             }
             //Debug.Log("Projectile death");
+            if (hitVfx != null)
+            {
+                hitVfx.SpawnVfx(transform.position, Quaternion.identity);
+            }
             PoolManager.EnqueueObject(this, PoolerType.PLAYER_BULLET);
             SoundManager.Instance.PlayOneShot(SoundType.BULLET_BOUNCE,0.1f,Random.Range(0.7f,1.3f));
         }
