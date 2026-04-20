@@ -26,12 +26,14 @@ public class PlayerController : MonoBehaviour
     public LineRenderer buildinkLinkRenderer;
 
     public static PlayerController Instance;
+    private AudioSource footstepSource;
     private void Awake()
     {
         Instance = this;
         rb = GetComponent<Rigidbody>();
         PlayerSignalReceiver = GetComponentInChildren<SignalMeshPointReceiver>();
         weapon.signalMeshReceiver = PlayerSignalReceiver;
+        footstepSource = GetComponent<AudioSource>();
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -105,6 +107,9 @@ public class PlayerController : MonoBehaviour
 
         //need actual physics here if we dont want the player clipping trough walls
         rb.linearVelocity = new Vector3(localMoveDir.x, localMoveDir.y, 0) * (baseSpeed + PlayerSignalReceiver.SignalStrength * extraSignalSpeed);
+
+        footstepSource.volume = rb.linearVelocity.magnitude * 0.15f;
+
     }
 
     void HandleRotation()
