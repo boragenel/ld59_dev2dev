@@ -60,6 +60,7 @@ public class Enemy : MonoBehaviour
     public LayerMask avoidanceMask;
     public Vector3 avoidanceDir = Vector3.zero;
     public Vector3 avoidanceTargetDir = Vector3.zero;
+    private float avoidanceTakeOverTimer = 0f;
 
     public float avoidanceCooldown;
     //private float avoidance
@@ -114,7 +115,16 @@ public class Enemy : MonoBehaviour
 
     public void PickTargetDestinationRandomly()
     {
-        targetDestination = transform.localPosition + (Vector3)Random.insideUnitCircle * 3f;
+
+        float searchRadius = 2f;
+        do
+        {
+            targetDestination = transform.localPosition + (Vector3)Random.insideUnitCircle * searchRadius;
+            if (!Physics.CheckSphere(targetDestination, 0.1f, avoidanceMask))
+                break;
+            searchRadius *= 1.05f;
+        } while (true);
+        
         targetDestination.z = transform.position.z;
     }
 
@@ -164,7 +174,9 @@ public class Enemy : MonoBehaviour
                 if (worldDir.sqrMagnitude > 1f)
                 {
                     worldDir.z = 0;
-                    targetDir = worldDir;
+                    if(avoidanceTakeOverTimer <= 0)
+                        targetDir = worldDir;
+                    
                     MoveTowardsDirection();
                 }
                 else
@@ -220,9 +232,12 @@ public class Enemy : MonoBehaviour
         //This was causing some weird issues so i turned it off for now until we get the game feeling better
         HandleLocalAvoidance();
 
-        Quaternion rot = transform.rotation;
-        transform.up = targetDir;
-        transform.rotation = Quaternion.Slerp(rot, transform.rotation, Time.deltaTime * rotSpeed);
+        Quaternion targetRotation = Quaternion.LookRotation(transform.forward, targetDir);
+        Quaternion rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotSpeed);
+        rb.rotation = rotation;
+        
+        Debug.DrawRay(transform.position, targetDir, Color.purple);
+        Debug.DrawRay(transform.position, targetDestination-transform.position, Color.yellow);
     }
 
     //This was causing some weird issues so i turned it off for now until we get the game feeling better
@@ -230,9 +245,10 @@ public class Enemy : MonoBehaviour
     {
         //Debug.Log("HandleLocalAvoidance");
         avoidanceCooldown -= Time.deltaTime;
+        avoidanceTakeOverTimer -= Time.deltaTime;
 
         RaycastHit[] collisions = new RaycastHit[10];
-        Physics.SphereCastNonAlloc(transform.position, 0.25f, transform.up, collisions, avoidanceCheckDistance, avoidanceMask);
+        Physics.SphereCastNonAlloc(transform.position+transform.up*0.1f, 0.1f, transform.up, collisions, avoidanceCheckDistance, avoidanceMask);
         foreach (RaycastHit hit in collisions)
         {
             if (hit.collider == null)
@@ -246,14 +262,19 @@ public class Enemy : MonoBehaviour
             if (avoidanceCooldown <= 0)
             {
                 avoidanceTargetDir = hit.normal;
-                avoidanceCooldown = 1.5f;
+                avoidanceCooldown = 0.5f;
+                avoidanceTakeOverTimer = 0.5f;
             }
-
+            
             Quaternion targetRot = Quaternion.LookRotation(transform.forward, avoidanceTargetDir);
-            Quaternion rot = Quaternion.RotateTowards(transform.rotation, targetRot, 15);
-            targetDir = rot * Vector3.up;
+            Quaternion rot = Quaternion.RotateTowards(transform.rotation, targetRot, 90);
+            targetDir = rot * Vector3.up;    
             break;
         }
+
+        
+        
+        
     }
 
     void DecideIdleExitAction()
