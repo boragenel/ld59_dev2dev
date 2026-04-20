@@ -86,9 +86,7 @@ public class Enemy : MonoBehaviour
                 ChangeState(AIState.IDLE);
                 break;
         }
-
-        // Remember starting zone (if any)
-        HandleCurrentZone();
+        
     }
 
     void Update()

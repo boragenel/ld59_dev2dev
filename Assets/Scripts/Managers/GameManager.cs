@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private float signalLosFadeInDuration = 0.25f;
     [SerializeField]
-    private float signalLosFadeInDelay = 0.1f;
+    private float signalLosFadeInDelay = 1f;
 
     public float gameTimer = 0f;
 
@@ -261,10 +261,14 @@ public class GameManager : MonoBehaviour
     }
     
 
-    public void SetPlayerToStartPos()
+    public void SetPlayerToStartPos(bool instant=false)
     {
-        LosEntrancePresentationComplete = false;
-        SetZoneRotationsEnabled(false);
+        if (!instant)
+        {
+            LosEntrancePresentationComplete = false;
+            SetZoneRotationsEnabled(false);    
+        }
+        
         player.ResetRigidbody();
         Transform entranceGate = GameManager.Instance.currentLevel.levelEntrance.transform;
         PlayerController pc = PlayerController.Instance;

@@ -10,7 +10,7 @@ public class BuildPiece : MonoBehaviour {
 
     private void Awake() {
         ApplyLockVisual();
-        HandleCurrentZone();
+        Invoke("HandleCurrentZone",0.2f);
     }
 
     private void OnValidate() {
