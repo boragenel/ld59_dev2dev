@@ -108,7 +108,7 @@ public class PlayerController : MonoBehaviour
         //need actual physics here if we dont want the player clipping trough walls
         rb.linearVelocity = new Vector3(localMoveDir.x, localMoveDir.y, 0) * (baseSpeed + PlayerSignalReceiver.SignalStrength * extraSignalSpeed);
 
-        footstepSource.volume = rb.linearVelocity.magnitude * 0.15f;
+        footstepSource.volume = rb.linearVelocity.magnitude * 0.45f;
 
     }
 

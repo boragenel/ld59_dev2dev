@@ -11,6 +11,7 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         settings.GetComponentInChildren<SettingsPanel>().LoadSettings();
+        SoundManager.Instance.masterMixer.SetFloat("MusicLowpass", 8000);
     }
 
     // Update is called once per frame
@@ -45,12 +46,12 @@ public class MainMenu : MonoBehaviour
 
     public void PlayHoverSound()
     {
-        SoundManager.Instance.PlayOneShot(SoundType.BULLET_BOUNCE,0.1f,Random.Range(0.8f,1.2f));
+        SoundManager.Instance.PlayOneShot(SoundType.BULLET_BOUNCE,0.4f,Random.Range(0.8f,1.2f));
     }
     
     public void PlayClickSound()
     {
-        SoundManager.Instance.PlayOneShot(SoundType.PLACE_PIECE,0.2f,Random.Range(0.8f,1.2f));
+        SoundManager.Instance.PlayOneShot(SoundType.PLACE_PIECE,0.5f,Random.Range(0.8f,1.2f));
     }
     
     IEnumerator PlayWebGLQuit()
