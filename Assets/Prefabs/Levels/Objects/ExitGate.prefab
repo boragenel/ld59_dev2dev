@@ -68,7 +68,7 @@ MonoBehaviour:
   keyHoleParent: {fileID: 5620088471639877978}
   keyHoles: []
   keyHoleMaterial: {fileID: 2100000, guid: 1052a94dc35be5f4d90cb8866eb44542, type: 2}
-  keyHoleLitMaterial: {fileID: 2100000, guid: 37f6c7a1de8bc33428fcc7b38f787fd9, type: 2}
+  keyHoleLitMaterial: {fileID: 2100000, guid: 92de152ca4553c74491a47d25ecf978e, type: 2}
 --- !u!33 &448299519985252660
 MeshFilter:
   m_ObjectHideFlags: 0
