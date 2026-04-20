@@ -24282,18 +24282,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 1902373648082975354, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5199030715646896422, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6986655647211413003, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 85433e698988db94087351bebccfa80f, type: 2}
     - target: {fileID: 7356941901141503952, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.42425
@@ -24892,6 +24880,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4c0b7b33e89f274b992ae0bcb287f0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  TEST_START: 1
+  soundManager: {fileID: 49963841}
+  uiManager: {fileID: 2000274981}
+  startingGamePhase: 4
+  currentGamePhase: 0
+  isTransitioning: 0
+  signalLosFadeOutDuration: 0.2
+  signalLosFadeInDuration: 0.25
+  signalLosFadeInDelay: 1
+  gameTimer: 0
+  player: {fileID: 1424093087}
+  transitionDepths: {fileID: 187873405}
+  LevelOrderPrefabs:
+  - {fileID: 7475852346799759515, guid: b15d563d319635747b3425859da19273, type: 3}
+  - {fileID: 7475852346799759515, guid: 81c5c811b1967c044b20e61d7b96dfee, type: 3}
+  - {fileID: 378678611591577018, guid: 2d10d95c43c1ab64f90d46870396a7c4, type: 3}
+  - {fileID: 378678611591577018, guid: 97c1352522c4a40429fcd9af013f771e, type: 3}
+  - {fileID: 7475852346799759515, guid: 0d49a521a3ec7154f8018abd655dd7ab, type: 3}
+  - {fileID: 649891764021861945, guid: 7fcbc18c04045884180a02ae9cd2a53e, type: 3}
+  currentLevelIndex: 0
+  currentLevel: {fileID: 0}
+--- !u!4 &1931737588
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931737586}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 654.1472, y: 541.68726, z: -340.50403}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1933817752
 GameObject:
   m_ObjectHideFlags: 0
