@@ -20,7 +20,7 @@ public class LoadingManager : MonoBehaviour
 
     public static UnityAction<string> OnLoadingExpected;
     public static UnityAction OnLoadingComplete;
-    public float fadeDuration = 0.5f;
+    public static float fadeDuration = 0.5f;
     public bool fadeInOnStart = true;
     
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]

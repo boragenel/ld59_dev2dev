@@ -231,17 +231,23 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("GAME OVER");
         StartCoroutine(GameOverSequence());
+        
         IEnumerator GameOverSequence()
         {
             PlayerController.Instance.controlsEnabled = false;
             PlayerController.Instance.gameObject.SetActive(false);
             PlayerController.Instance.transform.SetParent(null, true);
+            
+            yield return new WaitForSecondsRealtime(0.25f);
+            LoadingManager.fadeDuration = 0.25f;
+            LoadingManager.ForceFadeOut();
             SetZoneRotationsEnabled(false);
             GameManager.Instance.isTransitioning = true;
             GameManager.Instance.PlaySignalLosFadeOut();
             GameManager.OnLevelClear?.Invoke();
             //put destruction effects here, time delay, loading screen, idfks
             yield return new WaitForSecondsRealtime(0.5f);
+            LoadingManager.ForceFadeIn();
             SetZoneRotationsEnabled(true);
             RestartLevel();
         }

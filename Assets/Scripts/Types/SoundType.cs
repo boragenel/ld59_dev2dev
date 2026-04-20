@@ -14,4 +14,5 @@ public enum SoundType
  GATE_KEY_ACQUIRED,
  EXIT_OPEN,
  GLASS_HIT,
+ SAW_DEATH,
 }

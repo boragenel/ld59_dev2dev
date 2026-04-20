@@ -165,6 +165,7 @@ public class PlayerController : MonoBehaviour
             var sawblade = other.GetComponentInParent<Sawblade>();
             if (sawblade && sawblade.isOn)
             {
+                SoundManager.Instance.PlayOneShot(SoundType.SAW_DEATH,0.5f,Random.Range(0.8f,1.2f));
                 GameManager.Instance.TriggerGameOverSequence();
                 Death();
             }
