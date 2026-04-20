@@ -1,13 +1,15 @@
-    using DG.Tweening;
-    using UnityEngine;
-    using UnityStandardAssets.Utility;
+using DG.Tweening;
+using UnityEngine;
+using UnityStandardAssets.Utility;
 
-    public class Sawblade : MonoBehaviour
+public class Sawblade : MonoBehaviour
 {
     private SignalMeshPointReceiver signalReceiver;
     private Tween backNForthTween;
     public AutoMoveAndRotate rotator;
     public bool isOn = false;
+
+    public float movimentValue = 1.5f;
 
     public float moveDuration = 0;
 
@@ -23,7 +25,7 @@
                 backNForthTween.Kill();
             }
 
-            backNForthTween = rotator.transform.DOLocalMoveY(1.5f, moveDuration).SetLoops(-1, LoopType.Yoyo)
+            backNForthTween = rotator.transform.DOLocalMoveY(movimentValue, moveDuration).SetLoops(-1, LoopType.Yoyo)
                 .SetDelay(startDelay);
         }
     }
@@ -34,7 +36,8 @@
         if (rotator.enabled && hasSignalNow)
         {
             backNForthTween.Pause();
-        } else if (!rotator.enabled && !hasSignalNow)
+        }
+        else if (!rotator.enabled && !hasSignalNow)
         {
             backNForthTween.Play();
         }
