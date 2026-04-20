@@ -33,6 +33,13 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Dynamics")]
     public bool isTransitioning = false;
+    public bool LosEntrancePresentationComplete { get; private set; } = true;
+    [SerializeField]
+    private float signalLosFadeOutDuration = 0.2f;
+    [SerializeField]
+    private float signalLosFadeInDuration = 0.25f;
+    [SerializeField]
+    private float signalLosFadeInDelay = 1f;
 
     [Header("Key Objects")]
     public PlayerController player;
@@ -48,6 +55,10 @@ public class GameManager : MonoBehaviour
     public int currentLevelIndex = 0; //if it ends up being endless need to handle overflow and picking a random one with some difficulty modifiers, maybe enemy speed is extra for every value above the list count?
 
     [ReadOnly] public LevelBase currentLevel;
+
+    private float signalLosFadeValue = 1f;
+    private Tween signalLosFadeTween;
+    private Tween signalLosFadeInDelayTween;
 
     void Awake()
     {
@@ -70,7 +81,50 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        KillSignalLosFadeTween();
         Instance = null;
+    }
+
+    private void KillSignalLosFadeTween() {
+        if (signalLosFadeTween != null && signalLosFadeTween.IsActive()) {
+            signalLosFadeTween.Kill();
+        }
+        signalLosFadeTween = null;
+        if (signalLosFadeInDelayTween != null && signalLosFadeInDelayTween.IsActive()) {
+            signalLosFadeInDelayTween.Kill();
+        }
+        signalLosFadeInDelayTween = null;
+    }
+
+    private void ScheduleSignalLosFadeInAfterDelay(System.Action onComplete) {
+        if (signalLosFadeInDelayTween != null && signalLosFadeInDelayTween.IsActive()) {
+            signalLosFadeInDelayTween.Kill();
+        }
+        signalLosFadeInDelayTween = DOVirtual.DelayedCall(signalLosFadeInDelay, () => {
+            signalLosFadeInDelayTween = null;
+            PlaySignalLosFadeIn(onComplete);
+        }).SetTarget(this);
+    }
+
+    public void PlaySignalLosFadeOut() {
+        LosEntrancePresentationComplete = false;
+        KillSignalLosFadeTween();
+        signalLosFadeTween = DOTween.To(() => signalLosFadeValue, v => {
+            signalLosFadeValue = v;
+            SignalMeshFieldManager.Instance?.ApplyLosFadeToAllSources(v);
+        }, 0f, signalLosFadeOutDuration).SetTarget(this);
+    }
+
+    public void PlaySignalLosFadeIn(System.Action onComplete) {
+        KillSignalLosFadeTween();
+        signalLosFadeTween = DOTween.To(() => signalLosFadeValue, v => {
+            signalLosFadeValue = v;
+            SignalMeshFieldManager.Instance?.ApplyLosFadeToAllSources(v);
+        }, 1f, signalLosFadeInDuration).SetTarget(this).OnComplete(() => {
+            signalLosFadeTween = null;
+            LosEntrancePresentationComplete = true;
+            onComplete?.Invoke();
+        });
     }
 
     public GamePhase GetCurrentGamePhase()
@@ -96,6 +150,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void BeginGameplayFromBuild() {
+        LosEntrancePresentationComplete = true;
         ChangeGameState(GamePhase.GAMEPLAY);
     }
 
@@ -130,7 +185,6 @@ public class GameManager : MonoBehaviour
         PlayerController.Instance.gameObject.SetActive(true);
         ChangeGameState(GamePhase.BUILDING);
         SetPlayerToStartPos();
-        GameManager.Instance.isTransitioning = false;
     }
     public GameObject GetNextLevelPrefab()
     {
@@ -154,6 +208,7 @@ public class GameManager : MonoBehaviour
             PlayerController.Instance.gameObject.SetActive(false);
             PlayerController.Instance.transform.SetParent(null, true);
             GameManager.Instance.isTransitioning = true;
+            GameManager.Instance.PlaySignalLosFadeOut();
             GameManager.OnLevelClear?.Invoke();
             //put destruction effects here, time delay, loading screen, idfks
             yield return new WaitForSecondsRealtime(0.5f);
@@ -163,6 +218,7 @@ public class GameManager : MonoBehaviour
 
     public void SetPlayerToStartPos()
     {
+        LosEntrancePresentationComplete = false;
         Transform entranceGate = GameManager.Instance.currentLevel.levelEntrance.transform;
         PlayerController pc = PlayerController.Instance;
         if (entranceGate)
@@ -172,17 +228,21 @@ public class GameManager : MonoBehaviour
             pc.transform.position = pos;
             pc.transform.DOScale(1f, 0.25f).OnComplete(() => {
                 GameManager.Instance.isTransitioning = false;
-                pc.controlsEnabled = GameManager.Instance != null && GameManager.Instance.GetCurrentGamePhase() == GamePhase.GAMEPLAY;
-                pc.collision.SetActive(true);
-                pos = pc.transform.localPosition;
-                pos.z = 0;
-                pc.transform.localPosition = pos;
-                entranceGate.DOScale(0, 0.5f).SetDelay(0.4f);
+                GameManager.Instance.ScheduleSignalLosFadeInAfterDelay(() => {
+                    pc.controlsEnabled = GameManager.Instance != null && GameManager.Instance.GetCurrentGamePhase() == GamePhase.GAMEPLAY;
+                    pc.collision.SetActive(true);
+                    pos = pc.transform.localPosition;
+                    pos.z = 0;
+                    pc.transform.localPosition = pos;
+                    entranceGate.DOScale(0, 0.5f).SetDelay(0.4f);
+                });
             });
         }
         else
         {
             Debug.LogError("Entrance gate not found");
+            isTransitioning = false;
+            ScheduleSignalLosFadeInAfterDelay(null);
         }
     }
     #endregion

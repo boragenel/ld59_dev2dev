@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 416919325635248008}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.021, y: -0.068, z: 0.231}
+  m_LocalPosition: {x: -0.021, y: -0.068, z: 0}
   m_LocalScale: {x: 2.1291547, y: 2.1291547, z: 2.1291547}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -361,7 +361,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5338558993897563382}
-  - component: {fileID: 4689207659446554587}
   - component: {fileID: 7767614250229565722}
   - component: {fileID: 5437785065061805809}
   m_Layer: 14
@@ -390,30 +389,6 @@ Transform:
   - {fileID: 634090974103951592}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4689207659446554587
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5590911679135346009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 157238c38ef7b3641b65564b1a417fea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SignalSource
-  signalRendererHolder: {fileID: 8007548422713475119}
-  maxSignalRadius: 3
-  isUnblockableSignal: 0
-  signalSourceSize: 0.2
-  signalSearchMask:
-    serializedVersion: 2
-    m_Bits: 2304
-  signalBlockMask:
-    serializedVersion: 2
-    m_Bits: 887
-  signalLossPerUnitDistance: 0.1
-  minDistanceToReceiveMaxSignal: 0.8
 --- !u!135 &7767614250229565722
 SphereCollider:
   m_ObjectHideFlags: 0

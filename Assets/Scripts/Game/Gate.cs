@@ -33,6 +33,8 @@ public class Gate : MonoBehaviour
         {
             GameManager.OnLevelClear?.Invoke();
             GameManager.Instance.isTransitioning = true;
+            GameManager.Instance.PlaySignalLosFadeOut();
+            GameManager.Instance.ChangeGameState(GamePhase.BUILDING);
 
             GameObject levelFrom = GameManager.Instance.currentLevel.gameObject;
             GameObject levelTo = Instantiate(GameManager.Instance.GetNextLevelPrefab());
@@ -63,7 +65,6 @@ public class Gate : MonoBehaviour
             levelTo.SetActive(true);
             levelTo.transform.localScale = Vector3.one * 0.01f;
             levelTo.transform.DOScale(1f, 0.5f).OnComplete(() => {
-                GameManager.Instance.ChangeGameState(GamePhase.BUILDING);
                 GameManager.Instance.SetPlayerToStartPos();
             });
 

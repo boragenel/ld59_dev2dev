@@ -23,6 +23,8 @@ public class RotatingEnemy : MonoBehaviour {
         GamePhase phase = GameManager.Instance != null
             ? GameManager.Instance.GetCurrentGamePhase()
             : GamePhase.NONE;
+        bool presentationBlocked = GameManager.Instance != null
+            && (!GameManager.Instance.LosEntrancePresentationComplete || GameManager.Instance.isTransitioning);
 
         if (phase == GamePhase.GAMEPLAY && lastTrackedPhase != GamePhase.GAMEPLAY) {
             gameplaySignalLatched = false;
@@ -30,12 +32,12 @@ public class RotatingEnemy : MonoBehaviour {
         lastTrackedPhase = phase;
 
         bool hasSignalNow = signalReceiver != null && signalReceiver.SignalStrength > 0f;
-        if (phase == GamePhase.GAMEPLAY && hasSignalNow) {
+        if (!presentationBlocked && phase == GamePhase.GAMEPLAY && hasSignalNow) {
             gameplaySignalLatched = true;
         }
 
         bool showActive = false;
-        if (GameManager.Instance != null) {
+        if (GameManager.Instance != null && !presentationBlocked) {
             if (phase == GamePhase.BUILDING) {
                 showActive = hasSignalNow;
             } else if (phase == GamePhase.GAMEPLAY) {
@@ -47,7 +49,7 @@ public class RotatingEnemy : MonoBehaviour {
         if (phase == GamePhase.BUILDING) {
             return;
         }
-        if (phase != GamePhase.GAMEPLAY || pivot == null || !gameplaySignalLatched) {
+        if (presentationBlocked || phase != GamePhase.GAMEPLAY || pivot == null || !gameplaySignalLatched) {
             return;
         }
         transform.RotateAround(pivot.position, Vector3.forward, rotationSpeedDegreesPerSecond * Time.deltaTime);

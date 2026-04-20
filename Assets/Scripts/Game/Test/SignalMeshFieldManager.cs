@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SignalMeshFieldManager : MonoBehaviour {
     public static SignalMeshFieldManager Instance { get; private set; }
+    public static float CurrentLosFade { get; private set; } = 1f;
 
     private readonly List<TestSource> sources = new List<TestSource>();
 
@@ -35,6 +36,16 @@ public class SignalMeshFieldManager : MonoBehaviour {
         }
     }
 
+    public void ApplyLosFadeToAllSources(float fade) {
+        CurrentLosFade = fade;
+        for (int i = 0; i < sources.Count; i++) {
+            TestSource s = sources[i];
+            if (s != null) {
+                s.SetLosMaterialFade(fade);
+            }
+        }
+    }
+
     private void Awake() {
         if (Instance != null && Instance != this) {
             Destroy(gameObject);
@@ -47,6 +58,7 @@ public class SignalMeshFieldManager : MonoBehaviour {
     private void OnDestroy() {
         if (Instance == this) {
             Instance = null;
+            CurrentLosFade = 1f;
         }
     }
 }

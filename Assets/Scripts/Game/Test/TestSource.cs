@@ -3,6 +3,9 @@ using UnityEngine;
 
 [DefaultExecutionOrder(-100)]
 public class TestSource : MonoBehaviour {
+    private static readonly int LosFadePropertyId = Shader.PropertyToID("_Fade");
+    private static readonly int LosOriginPropertyId = Shader.PropertyToID("_Origin");
+
     public float ViewRadius = 10f;
     [Range(0, 360)]
     public float ViewAngle = 360f;
@@ -20,6 +23,8 @@ public class TestSource : MonoBehaviour {
 
     private Mesh primaryLosMesh;
     private MeshFilter primaryLosMeshFilter;
+    private MeshRenderer primaryLosRenderer;
+    private MaterialPropertyBlock losFadePropertyBlock;
     private readonly List<MeshFilter> reflectionMeshPool = new List<MeshFilter>();
     private TestMirror[] mirrorsForFrame = System.Array.Empty<TestMirror>();
     private readonly List<ViewCastInfo> primaryBoundary = new List<ViewCastInfo>();
@@ -29,6 +34,8 @@ public class TestSource : MonoBehaviour {
     private readonly List<MirrorHitSegment> mirrorSegmentMergeBuffer = new List<MirrorHitSegment>();
     private readonly List<Vector3> reflectionMirrorScratch = new List<Vector3>();
     private readonly List<Vector3> reflectionRimScratch = new List<Vector3>();
+    private Vector2 losPrimaryOriginWorldXY;
+    private readonly List<Vector2> losReflectionOriginWorldXY = new List<Vector2>();
 
     private struct MirrorSample {
         public float mirrorT;
@@ -40,10 +47,43 @@ public class TestSource : MonoBehaviour {
         MeshFilter losMf = CreateMeshChild("LosMesh", "LOS", startInactive: false);
         primaryLosMeshFilter = losMf;
         primaryLosMesh = losMf.sharedMesh;
+        primaryLosRenderer = losMf.GetComponent<MeshRenderer>();
+    }
+
+    public void SetLosMaterialFade(float fade) {
+        if (MeshMaterial == null) {
+            return;
+        }
+        if (losFadePropertyBlock == null) {
+            losFadePropertyBlock = new MaterialPropertyBlock();
+        }
+        if (primaryLosRenderer != null) {
+            losFadePropertyBlock.Clear();
+            losFadePropertyBlock.SetFloat(LosFadePropertyId, fade);
+            losFadePropertyBlock.SetVector(LosOriginPropertyId, new Vector4(losPrimaryOriginWorldXY.x, losPrimaryOriginWorldXY.y, 0f, 0f));
+            primaryLosRenderer.SetPropertyBlock(losFadePropertyBlock);
+        }
+        for (int i = 0; i < reflectionMeshPool.Count; i++) {
+            MeshFilter mf = reflectionMeshPool[i];
+            if (mf == null || !mf.gameObject.activeSelf) {
+                continue;
+            }
+            MeshRenderer mr = mf.GetComponent<MeshRenderer>();
+            if (mr == null) {
+                continue;
+            }
+            Vector2 origin = i < losReflectionOriginWorldXY.Count ? losReflectionOriginWorldXY[i] : Vector2.zero;
+            losFadePropertyBlock.Clear();
+            losFadePropertyBlock.SetFloat(LosFadePropertyId, fade);
+            losFadePropertyBlock.SetVector(LosOriginPropertyId, new Vector4(origin.x, origin.y, 0f, 0f));
+            mr.SetPropertyBlock(losFadePropertyBlock);
+        }
     }
 
     private void OnEnable() {
         SignalMeshFieldManager.Instance?.RegisterSource(this);
+        losPrimaryOriginWorldXY = new Vector2(transform.position.x, transform.position.y);
+        ApplyCurrentGlobalLosFade();
     }
 
     private void OnDisable() {
@@ -155,6 +195,9 @@ public class TestSource : MonoBehaviour {
     }
 
     private void LateUpdate() {
+        if (GameManager.Instance != null && GameManager.Instance.isTransitioning) {
+            return;
+        }
         DrawFieldOfView();
     }
 
@@ -283,6 +326,8 @@ public class TestSource : MonoBehaviour {
 
     private void DrawFieldOfView() {
         mirrorsForFrame = Object.FindObjectsByType<TestMirror>(FindObjectsSortMode.None);
+        losReflectionOriginWorldXY.Clear();
+        losPrimaryOriginWorldXY = new Vector2(transform.position.x, transform.position.y);
         int stepCount = Mathf.RoundToInt(ViewAngle * MeshResolution);
         if (stepCount < 1) {
             stepCount = 1;
@@ -326,6 +371,12 @@ public class TestSource : MonoBehaviour {
             reflectionSlotsUsed = RunReflectionBounceLoop();
         }
         FinalizeReflectionPool(reflectionSlotsUsed);
+        ApplyCurrentGlobalLosFade();
+    }
+
+    private void ApplyCurrentGlobalLosFade() {
+        float f = SignalMeshFieldManager.Instance != null ? SignalMeshFieldManager.CurrentLosFade : 1f;
+        SetLosMaterialFade(f);
     }
 
     private void EnsureBoundaryCastListCount(int count) {
@@ -418,6 +469,11 @@ public class TestSource : MonoBehaviour {
                 }
             }
         }
+        while (losReflectionOriginWorldXY.Count <= poolSlot) {
+            losReflectionOriginWorldXY.Add(Vector2.zero);
+        }
+        Vector3 mirrorMidWorld = (worldA + worldB) * 0.5f;
+        losReflectionOriginWorldXY[poolSlot] = new Vector2(mirrorMidWorld.x, mirrorMidWorld.y);
         MeshFilter mf = EnsureReflectionMeshSlot(poolSlot);
         WriteReflectionQuadStripMesh(mf.sharedMesh, reflectionMirrorScratch, reflectionRimScratch);
         mf.gameObject.SetActive(true);

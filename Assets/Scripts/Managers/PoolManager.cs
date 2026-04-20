@@ -11,7 +11,6 @@ public enum PoolerType
     NONE,
     GENERIC_SPRITE,
     PLAYER_BULLET,
-    SIGNAL_RENDERER,
 }
 
 [Serializable]
