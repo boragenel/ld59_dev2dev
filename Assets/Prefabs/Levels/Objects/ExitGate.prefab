@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8623520746429776653}
   - component: {fileID: 4762539330556394778}
+  - component: {fileID: 6428658229913144991}
   - component: {fileID: 448299519985252660}
   - component: {fileID: 6430561793398878496}
   - component: {fileID: 3077808991159694787}
@@ -35,6 +36,7 @@ Transform:
   m_Children:
   - {fileID: 6599514641548012258}
   - {fileID: 1448909792072363893}
+  - {fileID: 5620088471639877978}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4762539330556394778
@@ -50,6 +52,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   particle: {fileID: 7878572457100966181}
+--- !u!114 &6428658229913144991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1507810670804353656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3165368d6ce8f0f48acd8aad6d74a825, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GateKeyHolder
+  keyHolePrefab: {fileID: 919132149155446097, guid: 030008bfa4e8b41429bef39e23476e1a, type: 3}
+  keyHoleParent: {fileID: 5620088471639877978}
+  keyHoles: []
+  keyHoleMaterial: {fileID: 2100000, guid: 1052a94dc35be5f4d90cb8866eb44542, type: 2}
+  keyHoleLitMaterial: {fileID: 2100000, guid: 37f6c7a1de8bc33428fcc7b38f787fd9, type: 2}
 --- !u!33 &448299519985252660
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -128,6 +147,37 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.12
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &3283806830488348771
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5620088471639877978}
+  m_Layer: 0
+  m_Name: KeyHolesHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5620088471639877978
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3283806830488348771}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -0.05}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8623520746429776653}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &7878572457100966181
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,7 +401,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.80392164, g: 0.7960785, b: 0, a: 1}
+      maxColor: {r: 0.854902, g: 0.81568635, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -4138,8 +4188,8 @@ ParticleSystem:
       maxColor: {r: 0.8117648, g: 0.8078432, b: 0, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 0.99514556, b: 0, a: 1}
-        key1: {r: 0.8078432, g: 0.80392164, b: 0, a: 0}
+        key0: {r: 0.8431373, g: 0.80392164, b: 1, a: 1}
+        key1: {r: 0.8431373, g: 0.80392164, b: 1, a: 0}
         key2: {r: 1, g: 1, b: 1, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}

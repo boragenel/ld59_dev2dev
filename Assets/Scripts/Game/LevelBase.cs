@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 
 public class LevelBase : MonoBehaviour {
     public GameObject levelEntrance;
     [ReadOnly] public Gate levelExit;
     [ReadOnly] public int keyCount = 0;
+    public static event Action<int> keyCountChanged;
+
 
     private void Awake()
     {
@@ -17,6 +20,7 @@ public class LevelBase : MonoBehaviour {
     public void OnCollectKey()
     {
         keyCount--;
+        keyCountChanged?.Invoke(keyCount);
         if (keyCount <= 0) levelExit.UnlockGate();
     }
 
