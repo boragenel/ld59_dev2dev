@@ -5545,9 +5545,9 @@ MonoBehaviour:
   player: {fileID: 1424093087}
   transitionDepths: {fileID: 187873405}
   LevelOrderPrefabs:
-  - {fileID: 7475852346799759515, guid: b15d563d319635747b3425859da19273, type: 3}
-  - {fileID: 7475852346799759515, guid: 81c5c811b1967c044b20e61d7b96dfee, type: 3}
   - {fileID: 378678611591577018, guid: 2d10d95c43c1ab64f90d46870396a7c4, type: 3}
+  - {fileID: 7475852346799759515, guid: 81c5c811b1967c044b20e61d7b96dfee, type: 3}
+  - {fileID: 7475852346799759515, guid: b15d563d319635747b3425859da19273, type: 3}
   currentLevelIndex: 0
   currentLevel: {fileID: 0}
 --- !u!4 &1931737588
