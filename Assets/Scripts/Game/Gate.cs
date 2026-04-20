@@ -18,7 +18,7 @@ public class Gate : MonoBehaviour
     {
         isLocked = false;
         particle.SetActive(true);
-        SoundManager.Instance.PlayOneShot(SoundType.EXIT_OPEN,0.7f);
+        SoundManager.Instance.PlayOneShot(SoundType.EXIT_OPEN, 0.7f);
     }
 
     // Update is called once per frame
@@ -44,6 +44,8 @@ public class Gate : MonoBehaviour
             GameManager.Instance.currentLevel = levelTo.GetComponent<LevelBase>();
 
             PlayerController pc = other.GetComponentInParent<PlayerController>();
+            pc.enabled = false;
+            pc.transform.SetParent(null);
             pc.collision.SetActive(false);
             pc.controlsEnabled = false;
             pc.transform.SetParent(null, true);
@@ -55,9 +57,9 @@ public class Gate : MonoBehaviour
                 foreach (BuildPiece bp in levelFrom.GetComponentsInChildren<BuildPiece>())
                 {
                     bp.gameObject.SetActive(false);
-                }    
+                }
             });
-            
+
             levelFrom.transform.DOScale(10f, 1f).OnComplete(() =>
             {
                 levelFrom.gameObject.SetActive(false);
@@ -78,6 +80,7 @@ public class Gate : MonoBehaviour
             {
                 Camera.main.transform.DOShakePosition(0.25f, Vector3.one * 0.25f, 20);
                 GameManager.Instance.SetPlayerToStartPos();
+                pc.enabled = true;
             });
 
 
