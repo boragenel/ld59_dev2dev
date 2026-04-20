@@ -17,6 +17,7 @@ namespace UnityStandardAssets.Utility
         {
             rb = GetComponent<Rigidbody>();
             rb.isKinematic = true;
+            
         }
 
         private void Start()
@@ -26,6 +27,7 @@ namespace UnityStandardAssets.Utility
 
         private void FixedUpdate()
         {
+            
             float deltaTime = Time.fixedDeltaTime;
 
             if (ignoreTimescale)
@@ -50,6 +52,8 @@ namespace UnityStandardAssets.Utility
 
             rb.MovePosition(rb.position + worldMove);
             rb.MoveRotation(deltaRotation * rb.rotation);
+            
+            
         }
 
         [Serializable]

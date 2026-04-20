@@ -10,6 +10,7 @@ public class BuildPiece : MonoBehaviour {
 
     private void Awake() {
         ApplyLockVisual();
+        HandleCurrentZone();
     }
 
     private void OnValidate() {
@@ -29,12 +30,14 @@ public class BuildPiece : MonoBehaviour {
 
     public void HandleCurrentZone()
     {
+        Debug.Log("HandleCurrentZone 1");
         Physics.Raycast(transform.position + Vector3.back * 0.5f, Vector3.forward, out RaycastHit hit, 25, LayerMask.GetMask("Zone"));
         if (hit.collider != null)
         {
-            if (transform.parent != hit.transform.parent)
+            Debug.Log("HandleCurrentZone 2");
+            if (transform.parent != hit.collider.transform.parent)
             {
-                transform.SetParent(hit.transform.parent, true);
+                transform.SetParent(hit.collider.transform.parent, true);
             }
         }
     }

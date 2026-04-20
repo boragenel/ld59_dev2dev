@@ -52,6 +52,7 @@ public class Enemy : MonoBehaviour
     private float losePlayerTimer = 0f;
     private float stunTimer = 0f;
 
+    private Quaternion lastZoneRot;
     // Desired world-space direction from AI state
     private Vector3 targetDir;
 
@@ -100,7 +101,10 @@ public class Enemy : MonoBehaviour
         HandleCurrentZone();   // manage parenting only
         HandlePerception();
         HandleCurrentState();
+        
     }
+
+    
 
     void FixedUpdate()
     {
@@ -154,7 +158,7 @@ public class Enemy : MonoBehaviour
         switch (currentState)
         {
             case AIState.IDLE:
-                idleTimer = Random.Range(0.5f, 2f);
+                idleTimer = Random.Range(0.25f, 0.75f);
                 break;
 
             case AIState.RANDOM_PATROL:
@@ -408,7 +412,7 @@ public class Enemy : MonoBehaviour
             LayerMask.GetMask("Zone")
         );
 
-        Transform newZone = hit.collider != null ? hit.transform.parent : null;
+        Transform newZone = hit.collider != null ? hit.collider.transform.parent : null;
 
         if (newZone != currentZone)
         {
