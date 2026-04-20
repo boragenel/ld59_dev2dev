@@ -160,7 +160,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.CompareTag("Sawblade"))
         {
-            var sawblade = collision.GetComponentInParent<Sawblade>();
+            var sawblade = other.GetComponentInParent<Sawblade>();
             if(sawblade && sawblade.isOn)
                 GameManager.Instance.TriggerGameOverSequence();
         }

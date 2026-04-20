@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class LevelBase : MonoBehaviour {
-    [ReadOnly] public GameObject levelEntrance;
+    public GameObject levelEntrance;
     [ReadOnly] public Gate levelExit;
     [ReadOnly] public int keyCount = 0;
 

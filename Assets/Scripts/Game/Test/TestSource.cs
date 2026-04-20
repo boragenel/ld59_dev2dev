@@ -193,10 +193,10 @@ public class TestSource : MonoBehaviour {
             go.SetActive(false);
         }
 
-        /*
+        
         MeshCollider mc = mf.AddComponent<MeshCollider>();
         go.layer = LayerMask.NameToLayer("ReceptionArea");
-        */
+        
         return mf;
     }
 

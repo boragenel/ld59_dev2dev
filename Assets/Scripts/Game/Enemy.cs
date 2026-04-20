@@ -51,12 +51,14 @@ public class Enemy : MonoBehaviour
     private bool chasingPlayer = false;
     private float losePlayerTimer = 0f;
     private float stunTimer = 0f;
+
+    // Desired world-space direction from AI state
     private Vector3 targetDir;
+
+    // Actual steering after avoidance this physics step
+    private Vector3 steeringDir;
+
     private float patrolGiveupTimer = 0f;
-
-    private Transform currentZone;
-    private Quaternion lastZoneRotation;
-
     private Vector3 lastNonZeroTargetDir = Vector3.up;
 
     [Header("Local Avoidance")]
@@ -67,6 +69,9 @@ public class Enemy : MonoBehaviour
     private float avoidanceTakeOverTimer = 0f;
 
     public float avoidanceCooldown;
+
+    // Zone awareness: which rotating zone we are currently in, for parenting only
+    private Transform currentZone;
 
     void Start()
     {
@@ -80,6 +85,9 @@ public class Enemy : MonoBehaviour
                 ChangeState(AIState.IDLE);
                 break;
         }
+
+        // Remember starting zone (if any)
+        HandleCurrentZone();
     }
 
     void Update()
@@ -89,14 +97,13 @@ public class Enemy : MonoBehaviour
             stunTimer -= Time.deltaTime;
         }
 
-        HandleCurrentZone();
+        HandleCurrentZone();   // manage parenting only
         HandlePerception();
         HandleCurrentState();
     }
 
     void FixedUpdate()
     {
-        //HandleZoneRotation();
         HandleMovementPhysics();
     }
 
@@ -126,8 +133,10 @@ public class Enemy : MonoBehaviour
     public void PickTargetDestinationRandomly()
     {
         float searchRadius = 2f;
+
         do
         {
+            // world-space random point around current world position
             targetDestination = transform.position + (Vector3)Random.insideUnitCircle * searchRadius;
             targetDestination.z = transform.position.z;
 
@@ -184,30 +193,34 @@ public class Enemy : MonoBehaviour
                     patrolGiveupTimer = 0f;
                 }
 
-                Vector3 diff = targetDestination - transform.position;
-                diff.z = 0f;
+                {
+                    Vector3 diff = targetDestination - transform.position; // world space
+                    diff.z = 0f;
 
-                if (diff.sqrMagnitude > 0.001f)
-                {
-                    targetDir = diff.normalized;
-                    lastNonZeroTargetDir = targetDir;
-                }
-                else
-                {
-                    ChangeState(AIState.IDLE);
+                    if (diff.sqrMagnitude > 0.001f)
+                    {
+                        targetDir = diff.normalized;
+                        lastNonZeroTargetDir = targetDir;
+                    }
+                    else
+                    {
+                        ChangeState(AIState.IDLE);
+                    }
                 }
                 break;
 
             case AIState.CHASE_PLAYER:
                 targetDestination = GameManager.Instance.player.transform.position;
 
-                Vector3 diff2 = targetDestination - transform.position;
-                diff2.z = 0f;
-
-                if (diff2.sqrMagnitude > 0.001f)
                 {
-                    targetDir = diff2.normalized;
-                    lastNonZeroTargetDir = targetDir;
+                    Vector3 diff2 = targetDestination - transform.position;
+                    diff2.z = 0f;
+
+                    if (diff2.sqrMagnitude > 0.001f)
+                    {
+                        targetDir = diff2.normalized;
+                        lastNonZeroTargetDir = targetDir;
+                    }
                 }
                 break;
         }
@@ -221,11 +234,14 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        RotateTowardsTarget();
+        // Start from desired world-space direction each physics step
+        steeringDir = targetDir;
 
-        Vector3 moveDir = targetDir;
+        ApplyLocalAvoidance();   // modify steeringDir only
 
-        if (moveDir.sqrMagnitude < 0.0001f)
+        RotateTowardsSteering();
+
+        if (steeringDir.sqrMagnitude < 0.0001f)
         {
             rb.linearVelocity = Vector3.zero;
             return;
@@ -234,14 +250,12 @@ public class Enemy : MonoBehaviour
         float moveSpeed = (chasingPlayer ? chaseSpeed : baseSpeed) +
                           (signalMeshReceiver != null ? signalMeshReceiver.SignalStrength : 0f) * extraSgnalSpeed;
 
-        rb.linearVelocity = moveDir.normalized * moveSpeed;
+        rb.linearVelocity = steeringDir.normalized * moveSpeed;
     }
 
-    void RotateTowardsTarget()
+    void RotateTowardsSteering()
     {
-        HandleLocalAvoidance();
-
-        Vector3 dirToUse = targetDir;
+        Vector3 dirToUse = steeringDir;
 
         if (dirToUse.sqrMagnitude > 0.0001f)
         {
@@ -255,6 +269,7 @@ public class Enemy : MonoBehaviour
         if (dirToUse.sqrMagnitude < 0.0001f)
             return;
 
+        // Rotate around world Z (forward) regardless of parent rotation
         Quaternion targetWorldRotation = Quaternion.LookRotation(Vector3.forward, dirToUse.normalized);
         Quaternion next = Quaternion.RotateTowards(rb.rotation, targetWorldRotation, rotSpeed * Time.fixedDeltaTime);
 
@@ -264,7 +279,7 @@ public class Enemy : MonoBehaviour
         Debug.DrawRay(transform.position, targetDestination - transform.position, Color.yellow);
     }
 
-    void HandleLocalAvoidance()
+    void ApplyLocalAvoidance()
     {
         if (avoidanceTakeOverTimer > 0f)
         {
@@ -272,16 +287,16 @@ public class Enemy : MonoBehaviour
 
             if (avoidanceDir.sqrMagnitude > 0.0001f)
             {
-                targetDir = avoidanceDir;
+                steeringDir = avoidanceDir;
             }
 
             return;
         }
 
-        if (targetDir.sqrMagnitude < 0.0001f)
+        if (steeringDir.sqrMagnitude < 0.0001f)
             return;
 
-        Vector3 desiredDir = targetDir.normalized;
+        Vector3 desiredDir = steeringDir.normalized;
         Vector3 origin = transform.position;
         float rayDist = avoidanceCheckDistance;
 
@@ -319,14 +334,14 @@ public class Enemy : MonoBehaviour
         {
             steered.Normalize();
             avoidanceDir = steered;
-            targetDir = steered;
+            steeringDir = steered;
             avoidanceTakeOverTimer = 0.2f;
         }
 
         Debug.DrawRay(origin, forwardDir * rayDist, Color.red);
         Debug.DrawRay(origin, leftDir * rayDist * 0.75f, Color.yellow);
         Debug.DrawRay(origin, rightDir * rayDist * 0.75f, Color.yellow);
-        Debug.DrawRay(origin, targetDir.normalized * rayDist, Color.cyan);
+        Debug.DrawRay(origin, steeringDir.normalized * rayDist, Color.cyan);
     }
 
     void DecideIdleExitAction()
@@ -382,6 +397,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // ZONE AWARENESS: parenting only, no steering math
     void HandleCurrentZone()
     {
         Physics.Raycast(
@@ -392,35 +408,21 @@ public class Enemy : MonoBehaviour
             LayerMask.GetMask("Zone")
         );
 
-        if (hit.collider != null)
-        {
-            Transform newZone = hit.transform.parent;
+        Transform newZone = hit.collider != null ? hit.transform.parent : null;
 
-            if (currentZone != newZone)
+        if (newZone != currentZone)
+        {
+            currentZone = newZone;
+
+            // Re-parent to the new zone so we ride its rotation/movement
+            if (currentZone != null)
             {
-                currentZone = newZone;
-                if (currentZone != null)
-                    lastZoneRotation = currentZone.rotation;
+                transform.SetParent(currentZone, true);
+            }
+            else
+            {
+                transform.SetParent(null, true); // no zone → parent to root
             }
         }
-        else
-        {
-            currentZone = null;
-        }
-    }
-
-    void HandleZoneRotation()
-    {
-        if (currentZone == null)
-            return;
-
-        Quaternion deltaRotation = currentZone.rotation * Quaternion.Inverse(lastZoneRotation);
-
-        Vector3 offset = rb.position - currentZone.position;
-        offset = deltaRotation * offset;
-
-        rb.MovePosition(currentZone.position + offset);
-
-        lastZoneRotation = currentZone.rotation;
     }
 }

@@ -10,6 +10,8 @@
     public bool isOn = false;
 
     public float moveDuration = 0;
+
+    public float startDelay = 0f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -20,7 +22,9 @@
             {
                 backNForthTween.Kill();
             }
-            backNForthTween = rotator.transform.DOLocalMoveY(1.5f, moveDuration).SetLoops(-1, LoopType.Yoyo);
+
+            backNForthTween = rotator.transform.DOLocalMoveY(1.5f, moveDuration).SetLoops(-1, LoopType.Yoyo)
+                .SetDelay(startDelay);
         }
     }
 
