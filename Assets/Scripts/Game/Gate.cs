@@ -34,7 +34,7 @@ public class Gate : MonoBehaviour
             GameManager.OnLevelClear?.Invoke();
             GameManager.Instance.isTransitioning = true;
             GameManager.Instance.PlaySignalLosFadeOut();
-            GameManager.Instance.ChangeGameState(GamePhase.BUILDING);
+            //GameManager.Instance.ChangeGameState(GamePhase.BUILDING);
 
             GameObject levelFrom = GameManager.Instance.currentLevel.gameObject;
             GameObject levelTo = Instantiate(GameManager.Instance.GetNextLevelPrefab());

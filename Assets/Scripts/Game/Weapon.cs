@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using Random = UnityEngine.Random;
 
 public class Weapon : MonoBehaviour {
     private const float maxMeshesForAttackCooldownLerp = 4f;
@@ -24,6 +25,7 @@ public class Weapon : MonoBehaviour {
     public ParticleSystem PS;
     public Transform bulletOrigin;
 
+    
     //public static UnityAction<float> OnReceptionChanged;
 
     public SignalMeshPointReceiver signalMeshReceiver;
@@ -37,19 +39,21 @@ public class Weapon : MonoBehaviour {
     void Update()
     {
         HandleFiring();
+        
     }
 
     void HandleFiring()
     {
         attackCooldownTimer += Time.deltaTime;
 
+        /*
         //Trying auto fire to see if it feels good comment this out to go back to hold click to shoot;
         if (attackCooldownTimer >= GetAttackCooldown())
         {
             Fire();
         }
-        return;
-        ////////
+        */
+     
 
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
@@ -81,6 +85,9 @@ public class Weapon : MonoBehaviour {
 
     void Fire()
     {
+        if (BuildManager.Instance.hoveredPiece || BuildManager.Instance.carriedPiece)
+            return;
+        
         //this was feeling really punishing and not great, with the updated way the firerate + signal work just a long cooldown should be fine
         //if (signalMeshReceiver.SignalStrength == 0)
         //    return;
@@ -99,7 +106,7 @@ public class Weapon : MonoBehaviour {
         pBullet.transform.position = bulletOrigin.position;
         pBullet.transform.up = bulletOrigin.up;
         attackCooldownTimer = 0;
-
+        SoundManager.Instance.PlayOneShot(SoundType.PLAYER_LASER,0.5f,Random.Range(0.7f,1.3f));
         //Debug.Log("Yeah");
     }
 
@@ -107,7 +114,7 @@ public class Weapon : MonoBehaviour {
         if (signalMeshReceiver == null || signalMeshReceiver.SignalStrength <= 0) {
             return noSignalCooldown;
         }
-        float t = Mathf.Clamp01((float)signalMeshReceiver.SignalStrength / maxMeshesForAttackCooldownLerp);
+        float t = Mathf.Clamp01((float)signalMeshReceiver.SignalStrength);
         return Mathf.Lerp(baseAttackCooldown, maxAttackCooldown, t);
     }
 

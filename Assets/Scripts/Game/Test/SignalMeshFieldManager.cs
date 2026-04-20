@@ -17,7 +17,19 @@ public class SignalMeshFieldManager : MonoBehaviour {
         }
         return total;
     }
-
+    
+    public List<Vector3> GetMeshesContainingWorldPoint(Vector3 worldPoint) {
+        List<Vector3> result = new List<Vector3>();
+        for (int i = 0; i < sources.Count; i++) {
+            TestSource s = sources[i];
+            if (s != null && s.isActiveAndEnabled)
+            {
+                result.AddRange(s.GetMeshesContainingWorldPoint(worldPoint));
+            }
+        }
+        return result;
+    }
+    
     public void RegisterSource(TestSource source) {
         if (source != null && !sources.Contains(source)) {
             sources.Add(source);

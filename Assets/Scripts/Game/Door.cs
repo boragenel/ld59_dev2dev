@@ -86,5 +86,14 @@ public class Door : MonoBehaviour {
         tween1 = box1.DOLocalMove(t1, dur).SetEase(Ease.InOutQuad).SetLink(gameObject);
         tween2 = box2.DOLocalMove(t2, dur).SetEase(Ease.InOutQuad).SetLink(gameObject);
         lastOpen = isOpen;
+
+        if (lastOpen)
+        {
+            SoundManager.Instance.PlayOneShot(SoundType.DOORS_OPEN,0.4f,Random.Range(0.9f,1.1f));
+        }
+        else
+        {
+            SoundManager.Instance.PlayOneShot(SoundType.DOOTS_CLOSED,0.4f,Random.Range(0.9f,1.1f));
+        }
     }
 }

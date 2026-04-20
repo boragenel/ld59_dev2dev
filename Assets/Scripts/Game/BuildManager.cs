@@ -17,10 +17,12 @@ public class BuildManager : MonoBehaviour {
     [SerializeField]
     private float rotateKeyDegreesPerSecond = 120f;
 
-    private Transform carriedPiece;
+    public Transform carriedPiece;
     private Vector3 storedWorldPosition;
     private Quaternion storedWorldRotation;
     private Plane placementPlane;
+    public BuildPiece hoveredPiece;
+    
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -38,9 +40,11 @@ public class BuildManager : MonoBehaviour {
     }
 
     private void Update() {
+        /*
         if (!buildModeEnabled) {
             return;
         }
+        */
         Camera cam = Camera.main;
         if (cam == null || Mouse.current == null) {
             return;
@@ -52,19 +56,38 @@ public class BuildManager : MonoBehaviour {
         if (carriedPiece == null) {
             TryPick(cam);
         } else {
+            if (!HasClearPathToPlayer(carriedPiece))
+            {
+                PlaceCarried();
+                return;
+            }
+            GameManager.Instance.player.UpdateBuldingLink(carriedPiece.transform.position);
             DragCarried(cam);
             RotateCarried();
             if (Mouse.current.rightButton.wasPressedThisFrame) {
                 CancelCarry();
                 return;
             }
-            if (Mouse.current.leftButton.wasPressedThisFrame) {
+            if (Mouse.current.leftButton.wasReleasedThisFrame) {
                 PlaceCarried();
             }
         }
     }
 
-    private void TryPick(Camera cam) {
+    public bool HasClearPathToPlayer(Transform piece)
+    {
+        if (Mouse.current == null)
+            return false;
+        Vector3 mousePos = Mouse.current.position.ReadValue();
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(mousePos);
+        mouseWorldPos.z = 0f;
+        Vector3 diff = GameManager.Instance.player.transform.position - mouseWorldPos;
+        Physics.Raycast(GameManager.Instance.player.transform.position,-diff,out RaycastHit hit,diff.magnitude,LayerMask.GetMask("Wall"));
+        return hit.collider == null;
+    }
+
+    private void HandleHover(Camera cam)
+    {
         if (!Mouse.current.leftButton.wasPressedThisFrame) {
             return;
         }
@@ -76,9 +99,48 @@ public class BuildManager : MonoBehaviour {
         if (piece == null || piece.IsLocked) {
             return;
         }
-        carriedPiece = piece.transform;
-        storedWorldPosition = carriedPiece.position;
-        storedWorldRotation = carriedPiece.rotation;
+
+        if (!HasClearPathToPlayer(piece.transform))
+            return;
+
+
+        hoveredPiece = piece;
+
+    }
+    
+    private void TryPick(Camera cam)
+    {
+
+        hoveredPiece = null;
+        Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
+        if (!Physics.Raycast(ray, out RaycastHit hit, raycastMaxDistance, pickableLayers, QueryTriggerInteraction.Collide)) {
+            GameManager.Instance.player.ToggleBuildingLinkVisibility(false);
+            return;
+        }
+        BuildPiece piece = hit.collider.GetComponentInParent<BuildPiece>();
+        if (piece == null || piece.IsLocked) {
+            GameManager.Instance.player.ToggleBuildingLinkVisibility(false);
+            return;
+        }
+
+        if (!HasClearPathToPlayer(piece.transform))
+        {
+            GameManager.Instance.player.ToggleBuildingLinkVisibility(false);
+            return;
+        }
+
+        hoveredPiece = piece;
+
+        GameManager.Instance.player.ToggleBuildingLinkVisibility(true);
+        GameManager.Instance.player.UpdateBuldingLink(hoveredPiece.transform.position);
+        
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            carriedPiece = piece.transform;
+            storedWorldPosition = carriedPiece.position;
+            storedWorldRotation = carriedPiece.rotation;
+            carriedPiece.GetComponentInChildren<Collider>().enabled = false;
+        }
     }
 
     private void DragCarried(Camera cam) {
@@ -110,16 +172,21 @@ public class BuildManager : MonoBehaviour {
     }
 
     private void PlaceCarried() {
+        carriedPiece.GetComponentInChildren<Collider>().enabled = true;
         carriedPiece = null;
+        GameManager.Instance.player.ToggleBuildingLinkVisibility(false);
     }
 
+    
     private void CancelCarry() {
         if (carriedPiece == null) {
             return;
         }
         carriedPiece.position = storedWorldPosition;
         carriedPiece.rotation = storedWorldRotation;
+        carriedPiece.GetComponentInChildren<Collider>().enabled = true;
         carriedPiece = null;
+        GameManager.Instance.player.ToggleBuildingLinkVisibility(false);
     }
 
     public void SetBuildModeEnabled(bool enabled) {

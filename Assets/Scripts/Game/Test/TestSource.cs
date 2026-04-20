@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [DefaultExecutionOrder(-100)]
@@ -111,6 +112,29 @@ public class TestSource : MonoBehaviour {
         return count;
     }
 
+    public List<Vector3> GetMeshesContainingWorldPoint(Vector3 worldPoint) {
+        
+        List<Vector3> result = new List<Vector3>();
+        if (primaryLosMeshFilter != null && primaryLosMesh != null && MeshContainsPointXY(primaryLosMesh, primaryLosMeshFilter.transform, worldPoint)) {
+            result.Add(primaryLosMeshFilter.transform.position);
+        }
+        for (int i = 0; i < reflectionMeshPool.Count; i++) {
+            MeshFilter mf = reflectionMeshPool[i];
+            if (mf == null || !mf.gameObject.activeSelf) {
+                continue;
+            }
+            Mesh m = mf.sharedMesh;
+            if (m == null || m.triangles == null || m.triangles.Length < 3) {
+                continue;
+            }
+            if (MeshContainsPointXY(m, mf.transform, worldPoint)) {
+                result.Add(mf.transform.position);
+            }
+        }
+        return result;
+    }
+    
+    
     public bool IsWorldPointInsideField(Vector3 worldPoint) {
         return CountMeshesContainingWorldPoint(worldPoint) > 0;
     }
@@ -168,6 +192,11 @@ public class TestSource : MonoBehaviour {
         if (startInactive) {
             go.SetActive(false);
         }
+
+        /*
+        MeshCollider mc = mf.AddComponent<MeshCollider>();
+        go.layer = LayerMask.NameToLayer("ReceptionArea");
+        */
         return mf;
     }
 

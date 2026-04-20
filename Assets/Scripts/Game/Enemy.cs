@@ -159,7 +159,7 @@ public class Enemy : MonoBehaviour
 
                 Vector3 diff = targetDestination - transform.position;
                 //Vector3 worldDir = transform.parent.TransformDirection(diff);
-                Vector3 worldDir = diff.normalized;
+                Vector3 worldDir = diff;
 
                 if (worldDir.sqrMagnitude > 1f)
                 {
@@ -218,11 +218,11 @@ public class Enemy : MonoBehaviour
         //Debug.Log("RotateTowardsTarget");
 
         //This was causing some weird issues so i turned it off for now until we get the game feeling better
-        //HandleLocalAvoidance();
+        HandleLocalAvoidance();
 
         Quaternion rot = transform.rotation;
         transform.up = targetDir;
-        transform.rotation = Quaternion.Slerp(rot, transform.rotation, Time.deltaTime * 5f);
+        transform.rotation = Quaternion.Slerp(rot, transform.rotation, Time.deltaTime * rotSpeed);
     }
 
     //This was causing some weird issues so i turned it off for now until we get the game feeling better
@@ -246,11 +246,11 @@ public class Enemy : MonoBehaviour
             if (avoidanceCooldown <= 0)
             {
                 avoidanceTargetDir = hit.normal;
-                avoidanceCooldown = 0.5f;
+                avoidanceCooldown = 1.5f;
             }
 
             Quaternion targetRot = Quaternion.LookRotation(transform.forward, avoidanceTargetDir);
-            Quaternion rot = Quaternion.RotateTowards(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
+            Quaternion rot = Quaternion.RotateTowards(transform.rotation, targetRot, 15);
             targetDir = rot * Vector3.up;
             break;
         }

@@ -4,7 +4,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Events;
+using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 
 public enum GamePhase {
@@ -23,6 +25,7 @@ public class GameManager : MonoBehaviour
     [Header("Managers")]
     public SoundManager soundManager;
     public UIManager uiManager;
+    
 
     public static GameManager Instance;
     [Header("Game Phase")]
@@ -137,14 +140,14 @@ public class GameManager : MonoBehaviour
         switch (currentGamePhase) {
             case GamePhase.BUILDING:
                 BuildManager.Instance?.SetBuildModeEnabled(true);
-                SetPlayerBuildLocked(true);
+                //SetPlayerBuildLocked(true);
                 break;
             case GamePhase.GAMEPLAY:
-                BuildManager.Instance?.SetBuildModeEnabled(false);
-                SetPlayerBuildLocked(false);
+                BuildManager.Instance?.SetBuildModeEnabled(true);
+                SetPlayerBuildLocked(true);
                 break;
             default:
-                BuildManager.Instance?.SetBuildModeEnabled(false);
+                BuildManager.Instance?.SetBuildModeEnabled(true);
                 break;
         }
     }
@@ -183,7 +186,7 @@ public class GameManager : MonoBehaviour
         currentLevel = Instantiate(currentLevel.gameObject).GetComponent<LevelBase>();
 
         PlayerController.Instance.gameObject.SetActive(true);
-        ChangeGameState(GamePhase.BUILDING);
+        //ChangeGameState(GamePhase.BUILDING);
         SetPlayerToStartPos();
     }
     public GameObject GetNextLevelPrefab()
@@ -205,20 +208,39 @@ public class GameManager : MonoBehaviour
         StartCoroutine(GameOverSequence());
         IEnumerator GameOverSequence()
         {
+            PlayerController.Instance.controlsEnabled = false;
             PlayerController.Instance.gameObject.SetActive(false);
             PlayerController.Instance.transform.SetParent(null, true);
+            SetZoneRotationsEnabled(false);
             GameManager.Instance.isTransitioning = true;
             GameManager.Instance.PlaySignalLosFadeOut();
             GameManager.OnLevelClear?.Invoke();
             //put destruction effects here, time delay, loading screen, idfks
             yield return new WaitForSecondsRealtime(0.5f);
+            SetZoneRotationsEnabled(true);
             StartNewGame();
         }
     }
 
+    public void SetZoneRotationsEnabled(bool value)
+    {
+        foreach (Transform t in currentLevel.transform)
+        {
+            AutoMoveAndRotate amr = t.GetComponent<AutoMoveAndRotate>();
+            if (amr)
+            {
+                amr.enabled = value;    
+            }
+            
+        }
+    }
+    
+
     public void SetPlayerToStartPos()
     {
         LosEntrancePresentationComplete = false;
+        SetZoneRotationsEnabled(false);
+        player.ResetRigidbody();
         Transform entranceGate = GameManager.Instance.currentLevel.levelEntrance.transform;
         PlayerController pc = PlayerController.Instance;
         if (entranceGate)
@@ -231,9 +253,11 @@ public class GameManager : MonoBehaviour
                 GameManager.Instance.ScheduleSignalLosFadeInAfterDelay(() => {
                     pc.controlsEnabled = GameManager.Instance != null && GameManager.Instance.GetCurrentGamePhase() == GamePhase.GAMEPLAY;
                     pc.collision.SetActive(true);
+                    pc.ResetRigidbody();
                     pos = pc.transform.localPosition;
                     pos.z = 0;
                     pc.transform.localPosition = pos;
+                    SetZoneRotationsEnabled(true);
                     entranceGate.DOScale(0, 0.5f).SetDelay(0.4f);
                 });
             });

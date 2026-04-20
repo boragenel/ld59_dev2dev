@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Weapon weapon;
 
+    public LineRenderer buildinkLinkRenderer;
+
     public static PlayerController Instance;
     private void Awake()
     {
@@ -42,6 +44,11 @@ public class PlayerController : MonoBehaviour
         inputSystemActions.Disable();
     }
 
+    private void OnEnable()
+    {
+        ResetRigidbody();
+    }
+
     public Weapon GetWeapon()
     {
         return weapon;
@@ -52,15 +59,33 @@ public class PlayerController : MonoBehaviour
         if (controlsEnabled)
         {
             HandleRotation();
-            HandleMovement();
+            if(BuildManager.Instance.carriedPiece == null)
+            {
+                HandleMovement();    
+            }
+            
         }
+        
     }
+
+    public void UpdateBuldingLink(Vector3 inPos)
+    {
+        buildinkLinkRenderer.SetPosition(0,transform.position);
+        buildinkLinkRenderer.SetPosition(1,inPos);
+    }
+
+    public void ToggleBuildingLinkVisibility(bool value)
+    {
+        buildinkLinkRenderer.enabled = value;
+    }
+    
     private void FixedUpdate()
     {
         HandleCurrentZone();
         if (controlsEnabled)
         {
-            HandleMovement();
+            if(BuildManager.Instance.carriedPiece == null)
+                HandleMovement();
 
         }
     }
@@ -107,15 +132,32 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void ResetRigidbody()
+    {
+        if (rb)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (!controlsEnabled)
+            return;
+        
+        if (collision.collider.CompareTag("Enemy"))
         {
-            var enemy = collision.gameObject.GetComponentInParent<Enemy>();
+            var enemy = collision.collider.GetComponentInParent<Enemy>();
             if (enemy != null)
                 Destroy(enemy.gameObject);
 
             GameManager.Instance.TriggerGameOverSequence();
+        } else if (collision.collider.CompareTag("Sawblade"))
+        {
+            var sawblade = collision.collider.GetComponentInParent<Sawblade>();
+            if(sawblade && sawblade.isOn)
+                GameManager.Instance.TriggerGameOverSequence();
         }
     }
 }
