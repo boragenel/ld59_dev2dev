@@ -5,8 +5,11 @@ public class BuildPiece : MonoBehaviour {
     private bool isLocked;
     [SerializeField]
     private GameObject lockSprite;
+    [SerializeField]
+    private GameObject dragGhostPrefab;
 
     public bool IsLocked => isLocked;
+    public GameObject DragGhostPrefab => dragGhostPrefab;
 
     private void Awake() {
         ApplyLockVisual();

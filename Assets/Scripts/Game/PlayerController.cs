@@ -24,16 +24,27 @@ public class PlayerController : MonoBehaviour
     private Weapon weapon;
 
     public LineRenderer buildinkLinkRenderer;
+    [SerializeField]
+    private Color buildingLinkInvalidColor = Color.red;
+    [SerializeField]
+    private float buildingLinkZOffset = 0.15f;
+    public float BuildingLinkZOffset => buildingLinkZOffset;
 
     public static PlayerController Instance;
     private AudioSource footstepSource;
-    private void Awake()
-    {
+    private Color buildingLinkStartDefault;
+    private Color buildingLinkEndDefault;
+
+    private void Awake() {
         Instance = this;
         rb = GetComponent<Rigidbody>();
         PlayerSignalReceiver = GetComponentInChildren<SignalMeshPointReceiver>();
         weapon.signalMeshReceiver = PlayerSignalReceiver;
         footstepSource = GetComponent<AudioSource>();
+        if (buildinkLinkRenderer != null) {
+            buildingLinkStartDefault = buildinkLinkRenderer.startColor;
+            buildingLinkEndDefault = buildinkLinkRenderer.endColor;
+        }
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -62,19 +73,29 @@ public class PlayerController : MonoBehaviour
         if (controlsEnabled)
         {
             HandleRotation();
-            if(BuildManager.Instance.carriedPiece == null)
-            {
-                HandleMovement();    
-            }
+//            if(BuildManager.Instance.carriedPiece == null)
+//            {
+            HandleMovement();    
+//            }
             
         }
         
     }
 
-    public void UpdateBuldingLink(Vector3 inPos)
-    {
-        buildinkLinkRenderer.SetPosition(0,transform.position);
-        buildinkLinkRenderer.SetPosition(1,inPos);
+    public void UpdateBuldingLink(Vector3 inPos, bool sightClear = true) {
+        Vector3 from = transform.position;
+        Vector3 to = inPos;
+        from.z += buildingLinkZOffset;
+        to.z += buildingLinkZOffset;
+        buildinkLinkRenderer.SetPosition(0, from);
+        buildinkLinkRenderer.SetPosition(1, to);
+        if (sightClear) {
+            buildinkLinkRenderer.startColor = buildingLinkStartDefault;
+            buildinkLinkRenderer.endColor = buildingLinkEndDefault;
+        } else {
+            buildinkLinkRenderer.startColor = buildingLinkInvalidColor;
+            buildinkLinkRenderer.endColor = buildingLinkInvalidColor;
+        }
     }
 
     public void ToggleBuildingLinkVisibility(bool value)
@@ -85,11 +106,8 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         HandleCurrentZone();
-        if (controlsEnabled)
-        {
-            if(BuildManager.Instance.carriedPiece == null)
-                HandleMovement();
-
+        if (controlsEnabled) {
+            HandleMovement();
         }
     }
     void HandleMovement()

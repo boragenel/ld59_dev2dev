@@ -22,7 +22,9 @@ public class BuildManager : MonoBehaviour {
     private Quaternion storedWorldRotation;
     private Plane placementPlane;
     public BuildPiece hoveredPiece;
-    
+    private GameObject dragGhostInstance;
+    private Vector3 carryLinkCursorOnPlane;
+
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -56,14 +58,11 @@ public class BuildManager : MonoBehaviour {
         if (carriedPiece == null) {
             TryPick(cam);
         } else {
-            if (!HasClearPathToPlayer(carriedPiece))
-            {
-                PlaceCarried();
-                return;
-            }
-            GameManager.Instance.player.UpdateBuldingLink(carriedPiece.transform.position);
             DragCarried(cam);
+            bool linkSightClear = HasClearLineOfSightTo(carryLinkCursorOnPlane);
+            GameManager.Instance.player.UpdateBuldingLink(carryLinkCursorOnPlane, linkSightClear);
             RotateCarried();
+            SyncDragGhostRotation();
             if (Mouse.current.rightButton.wasPressedThisFrame) {
                 CancelCarry();
                 return;
@@ -74,16 +73,25 @@ public class BuildManager : MonoBehaviour {
         }
     }
 
-    public bool HasClearPathToPlayer(Transform piece)
-    {
-        if (Mouse.current == null)
+    public bool HasClearLineOfSightTo(Vector3 worldPoint) {
+        Transform playerTransform = GameManager.Instance.player.transform;
+        Vector3 origin = playerTransform.position;
+        origin.z = 0f;
+        worldPoint.z = 0f;
+        Vector3 delta = worldPoint - origin;
+        float dist = delta.magnitude;
+        if (dist < 1e-4f) {
+            return true;
+        }
+        Vector3 dir = delta / dist;
+        return !Physics.Raycast(origin, dir, out _, dist, LayerMask.GetMask("Wall"));
+    }
+
+    public bool HasClearPathToPlayer(Transform piece) {
+        if (piece == null) {
             return false;
-        Vector3 mousePos = Mouse.current.position.ReadValue();
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(mousePos);
-        mouseWorldPos.z = 0f;
-        Vector3 diff = GameManager.Instance.player.transform.position - mouseWorldPos;
-        Physics.Raycast(GameManager.Instance.player.transform.position,-diff,out RaycastHit hit,diff.magnitude,LayerMask.GetMask("Wall"));
-        return hit.collider == null;
+        }
+        return HasClearLineOfSightTo(piece.position);
     }
 
     private void HandleHover(Camera cam)
@@ -134,22 +142,67 @@ public class BuildManager : MonoBehaviour {
         GameManager.Instance.player.ToggleBuildingLinkVisibility(true);
         GameManager.Instance.player.UpdateBuldingLink(hoveredPiece.transform.position);
         
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
+        if (Mouse.current.leftButton.wasPressedThisFrame) {
             carriedPiece = piece.transform;
             storedWorldPosition = carriedPiece.position;
             storedWorldRotation = carriedPiece.rotation;
             carriedPiece.GetComponentInChildren<Collider>().enabled = false;
+            carryLinkCursorOnPlane = carriedPiece.position;
+            CreateDragGhost(piece);
             SoundManager.Instance.PlayOneShot(SoundType.PIECE_PICKUP,0.15f,Random.Range(0.8f,1.2f));
         }
     }
 
     private void DragCarried(Camera cam) {
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
-        if (placementPlane.Raycast(ray, out float enter)) {
-            Vector3 p = ray.GetPoint(enter);
-            p.z = planeZ;
+        if (!placementPlane.Raycast(ray, out float enter)) {
+            SetDragGhostVisible(false);
+            return;
+        }
+        Vector3 p = ray.GetPoint(enter);
+        p.z = planeZ;
+        carryLinkCursorOnPlane = p;
+        if (HasClearLineOfSightTo(p)) {
             carriedPiece.position = p;
+            SetDragGhostVisible(false);
+        } else {
+            SetDragGhostVisible(true);
+            if (dragGhostInstance != null) {
+                Vector3 ghostPos = p;
+                ghostPos.z += GameManager.Instance.player.BuildingLinkZOffset;
+                dragGhostInstance.transform.SetPositionAndRotation(ghostPos, carriedPiece.rotation);
+            }
+        }
+    }
+
+    private void CreateDragGhost(BuildPiece piece) {
+        DestroyDragGhost();
+        if (piece == null || piece.DragGhostPrefab == null) {
+            return;
+        }
+        dragGhostInstance = Instantiate(piece.DragGhostPrefab);
+        dragGhostInstance.SetActive(false);
+    }
+
+    private void SetDragGhostVisible(bool visible) {
+        if (dragGhostInstance == null) {
+            return;
+        }
+        dragGhostInstance.SetActive(visible);
+    }
+
+    private void SyncDragGhostRotation() {
+        if (dragGhostInstance == null || !dragGhostInstance.activeSelf) {
+            return;
+        }
+        Vector3 p = dragGhostInstance.transform.position;
+        dragGhostInstance.transform.SetPositionAndRotation(p, carriedPiece.rotation);
+    }
+
+    private void DestroyDragGhost() {
+        if (dragGhostInstance != null) {
+            Destroy(dragGhostInstance);
+            dragGhostInstance = null;
         }
     }
 
@@ -160,10 +213,10 @@ public class BuildManager : MonoBehaviour {
             deltaZ += Mathf.Sign(scroll.y) * rotateScrollDegrees;
         }
         if (Keyboard.current != null) {
-            if (Keyboard.current.aKey.isPressed) {
+            if (Keyboard.current.qKey.isPressed) {
                 deltaZ += rotateKeyDegreesPerSecond * Time.deltaTime;
             }
-            if (Keyboard.current.dKey.isPressed) {
+            if (Keyboard.current.eKey.isPressed) {
                 deltaZ -= rotateKeyDegreesPerSecond * Time.deltaTime;
             }
         }
@@ -176,6 +229,7 @@ public class BuildManager : MonoBehaviour {
         carriedPiece.GetComponentInChildren<Collider>().enabled = true;
         carriedPiece.GetComponent<BuildPiece>()?.HandleCurrentZone();
         carriedPiece = null;
+        DestroyDragGhost();
         GameManager.Instance.player.ToggleBuildingLinkVisibility(false);
         SoundManager.Instance.PlayOneShot(SoundType.PLACE_PIECE,0.15f,Random.Range(0.8f,1.2f));
     }
@@ -190,6 +244,7 @@ public class BuildManager : MonoBehaviour {
         carriedPiece.GetComponentInChildren<Collider>().enabled = true;
         carriedPiece.GetComponent<BuildPiece>()?.HandleCurrentZone();
         carriedPiece = null;
+        DestroyDragGhost();
         SoundManager.Instance.PlayOneShot(SoundType.PLACE_PIECE,0.15f,Random.Range(0.8f,1.2f));
         GameManager.Instance.player.ToggleBuildingLinkVisibility(false);
     }
