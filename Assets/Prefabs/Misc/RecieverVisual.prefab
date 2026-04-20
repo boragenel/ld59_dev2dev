@@ -94,9 +94,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 21b587a544c71684290719a80aaf7d47, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8809309873991907123}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 21b587a544c71684290719a80aaf7d47, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 4668323622188506553}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 21b587a544c71684290719a80aaf7d47, type: 3}
       insertIndex: -1
@@ -107,22 +104,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 21b587a544c71684290719a80aaf7d47, type: 3}
   m_PrefabInstance: {fileID: 510108173115193879}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8809309873991907123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 852637730683799366}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4f91e2b8a6d4e1f9b0c3d5e7f8a9b0c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SignalMeshPointReceiver
-  worldOffset: {x: 0, y: 0, z: 0}
-  preciseSignalStrength: 0
-  SignalStrength: 0
-  affectMusic: 0
 --- !u!95 &4668323622188506553
 Animator:
   serializedVersion: 7
