@@ -61,6 +61,10 @@ public class Projectile : MonoBehaviour
                     Enemy e = col.GetComponentInParent<Enemy>();
                     e.TakeDamage(damage);
                 }
+                else if (col.gameObject.layer == LayerMask.NameToLayer("Glass"))
+                {
+                    SoundManager.Instance.PlayOneShot(SoundType.GLASS_HIT,0.25f,Random.Range(0.8f,1.2f));
+                }
             }
             //Debug.Log("Projectile death");
             if (hitVfx != null)

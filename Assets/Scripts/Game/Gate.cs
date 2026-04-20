@@ -18,6 +18,7 @@ public class Gate : MonoBehaviour
     {
         isLocked = false;
         particle.SetActive(true);
+        SoundManager.Instance.PlayOneShot(SoundType.EXIT_OPEN,0.7f);
     }
 
     // Update is called once per frame
