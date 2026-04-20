@@ -140,6 +140,7 @@ public class BuildManager : MonoBehaviour {
             storedWorldPosition = carriedPiece.position;
             storedWorldRotation = carriedPiece.rotation;
             carriedPiece.GetComponentInChildren<Collider>().enabled = false;
+            SoundManager.Instance.PlayOneShot(SoundType.PIECE_PICKUP,0.15f,Random.Range(0.8f,1.2f));
         }
     }
 
@@ -176,6 +177,7 @@ public class BuildManager : MonoBehaviour {
         carriedPiece.GetComponent<BuildPiece>()?.HandleCurrentZone();
         carriedPiece = null;
         GameManager.Instance.player.ToggleBuildingLinkVisibility(false);
+        SoundManager.Instance.PlayOneShot(SoundType.PLACE_PIECE,0.15f,Random.Range(0.8f,1.2f));
     }
 
     
@@ -188,6 +190,7 @@ public class BuildManager : MonoBehaviour {
         carriedPiece.GetComponentInChildren<Collider>().enabled = true;
         carriedPiece.GetComponent<BuildPiece>()?.HandleCurrentZone();
         carriedPiece = null;
+        SoundManager.Instance.PlayOneShot(SoundType.PLACE_PIECE,0.15f,Random.Range(0.8f,1.2f));
         GameManager.Instance.player.ToggleBuildingLinkVisibility(false);
     }
 

@@ -313,6 +313,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 857c0050c39e22b478c64b9472075ba1, type: 3}
   - {fileID: 8300000, guid: 83bb298406bdda44dad36f9d1ef57042, type: 3}
   - {fileID: 8300000, guid: 3a116a74dd051ae4e90fa24d06d52a1b, type: 3}
+  - {fileID: 8300000, guid: 503aec3a7e04835458bcb21d5b2b0b17, type: 3}
+  - {fileID: 8300000, guid: d3be31a02b18dd3499280342431aab99, type: 3}
+  - {fileID: 8300000, guid: 11d331accc7c43f4a9d82a198e44aac2, type: 3}
   currentlyPlaying: []
   numberOfChannels: 32
   channels: []

@@ -9,4 +9,6 @@ public enum SoundType
  ENEMY_HIT,
  PLAYER_DEATH,
  ENEMY_DEATH,
+ PIECE_PICKUP,
+ PLACE_PIECE,
 }
