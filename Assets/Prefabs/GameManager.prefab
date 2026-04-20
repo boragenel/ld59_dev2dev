@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2526171124326009767
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8941607355874497237}
+  - component: {fileID: 2497980102357920874}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8941607355874497237
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2526171124326009767}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 654.1472, y: 541.68726, z: -340.50403}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2497980102357920874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2526171124326009767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4c0b7b33e89f274b992ae0bcb287f0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  TEST_START: 1
+  soundManager: {fileID: 0}
+  uiManager: {fileID: 0}
+  startingGamePhase: 4
+  currentGamePhase: 0
+  isTransitioning: 0
+  signalLosFadeOutDuration: 0.2
+  signalLosFadeInDuration: 0.25
+  signalLosFadeInDelay: 1
+  gameTimer: 0
+  player: {fileID: 0}
+  transitionDepths: {fileID: 0}
+  LevelOrderPrefabs:
+  - {fileID: 7475852346799759515, guid: 81c5c811b1967c044b20e61d7b96dfee, type: 3}
+  - {fileID: 378678611591577018, guid: 2d10d95c43c1ab64f90d46870396a7c4, type: 3}
+  - {fileID: 7475852346799759515, guid: b15d563d319635747b3425859da19273, type: 3}
+  - {fileID: 378678611591577018, guid: 97c1352522c4a40429fcd9af013f771e, type: 3}
+  - {fileID: 7475852346799759515, guid: 0d49a521a3ec7154f8018abd655dd7ab, type: 3}
+  - {fileID: 649891764021861945, guid: 7fcbc18c04045884180a02ae9cd2a53e, type: 3}
+  currentLevelIndex: 0
+  currentLevel: {fileID: 0}
+  playerDeathVfx:
+    vfxPrefab: {fileID: 8167975121848204796, guid: 614a2ce01e282fb479b6f2a795865b01, type: 3}
+    destroyDelay: 1

@@ -66,6 +66,8 @@ public class GameManager : MonoBehaviour
     private Tween signalLosFadeTween;
     private Tween signalLosFadeInDelayTween;
 
+    public VfxInstancer playerDeathVfx;
+
     void Awake()
     {
         if (Instance)
@@ -234,6 +236,7 @@ public class GameManager : MonoBehaviour
         
         IEnumerator GameOverSequence()
         {
+            playerDeathVfx.SpawnVfx(player.transform.position, Quaternion.identity);
             PlayerController.Instance.controlsEnabled = false;
             PlayerController.Instance.gameObject.SetActive(false);
             PlayerController.Instance.transform.SetParent(null, true);

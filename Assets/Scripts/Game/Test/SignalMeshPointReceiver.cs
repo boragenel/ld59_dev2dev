@@ -74,7 +74,6 @@ public class SignalMeshPointReceiver : MonoBehaviour {
                 isOn = true;
                 if (animator != null)
                     animator.SetBool("IsOn", true);
-                Debug.Log("Turned on");
             }
         }
         else
@@ -84,7 +83,6 @@ public class SignalMeshPointReceiver : MonoBehaviour {
                 isOn = false;
                 if (animator != null)
                     animator.SetBool("IsOn", false);
-                Debug.Log("Turned off");
             }
         }
     }
