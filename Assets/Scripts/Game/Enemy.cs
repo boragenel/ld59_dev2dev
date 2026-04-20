@@ -74,6 +74,7 @@ public class Enemy : MonoBehaviour
 
     // Zone awareness: which rotating zone we are currently in, for parenting only
     private Transform currentZone;
+    public VfxInstancer deathVfx;
 
     void Start()
     {
@@ -134,6 +135,10 @@ public class Enemy : MonoBehaviour
 
     public void Die()
     {
+        if (deathVfx != null)
+        {
+            deathVfx.SpawnVfx(transform.position, Quaternion.identity);
+        }
         SoundManager.Instance.PlayOneShot(SoundType.ENEMY_DEATH,0.5f,Random.Range(0.8f,1.2f));
         Destroy(gameObject);
     }

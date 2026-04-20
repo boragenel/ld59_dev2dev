@@ -250,6 +250,9 @@ MonoBehaviour:
   avoidanceDir: {x: 0, y: 0, z: 0}
   avoidanceTargetDir: {x: 0, y: 0, z: 0}
   avoidanceCooldown: 0
+  deathVfx:
+    vfxPrefab: {fileID: 8167975121848204796, guid: d02d1085f71bdc54b80bb41ab3a59379, type: 3}
+    destroyDelay: 1
 --- !u!54 &2342338514690831517
 Rigidbody:
   m_ObjectHideFlags: 0
