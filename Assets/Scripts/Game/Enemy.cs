@@ -17,7 +17,6 @@ public enum EnemyType
     BASIC_ENEMY
 }
 
-
 public class Enemy : MonoBehaviour
 {
     public EnemyType enemyType;
@@ -32,9 +31,9 @@ public class Enemy : MonoBehaviour
 
     public float idleTimer = 0f;
 
-    private Rigidbody rb; //hehe
+    private Rigidbody rb;
 
-    [Header("Speed")]
+    [Header("Health")]
     public float maxHp;
     public float currentHP;
 
@@ -51,9 +50,14 @@ public class Enemy : MonoBehaviour
     [Header("Dynamics")]
     private bool chasingPlayer = false;
     private float losePlayerTimer = 0f;
-    private float stunTimer = 0;
+    private float stunTimer = 0f;
     private Vector3 targetDir;
     private float patrolGiveupTimer = 0f;
+
+    private Transform currentZone;
+    private Quaternion lastZoneRotation;
+
+    private Vector3 lastNonZeroTargetDir = Vector3.up;
 
     [Header("Local Avoidance")]
     public float avoidanceCheckDistance = 0.8f;
@@ -63,12 +67,7 @@ public class Enemy : MonoBehaviour
     private float avoidanceTakeOverTimer = 0f;
 
     public float avoidanceCooldown;
-    //private float avoidance
 
-    //Pomo notes
-    //I tried cleaning this up a bit to work with physics, not gonna have time to fully polish it unfortunetly, might be good enough as is but well see
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         currentHP = maxHp;
@@ -83,6 +82,24 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (stunTimer > 0f)
+        {
+            stunTimer -= Time.deltaTime;
+        }
+
+        HandleCurrentZone();
+        HandlePerception();
+        HandleCurrentState();
+    }
+
+    void FixedUpdate()
+    {
+        //HandleZoneRotation();
+        HandleMovementPhysics();
+    }
+
     public void TakeDamage(float damage)
     {
         currentHP -= damage;
@@ -90,22 +107,15 @@ public class Enemy : MonoBehaviour
         {
             Die();
         }
+        else
+        {
+            ChangeState(AIState.CHASE_PLAYER);
+        }
     }
+
     public void Die()
     {
         Destroy(gameObject);
-    }
-
-    void Update()
-    {
-        if (stunTimer > 0)
-        {
-            stunTimer -= Time.deltaTime;
-        }
-        //dsnt the enemy need this back on?
-        HandleCurrentZone(); 
-        HandlePerception();
-        HandleCurrentState();
     }
 
     public AIState GetCurrentState()
@@ -115,30 +125,34 @@ public class Enemy : MonoBehaviour
 
     public void PickTargetDestinationRandomly()
     {
-
         float searchRadius = 2f;
         do
         {
-            targetDestination = transform.localPosition + (Vector3)Random.insideUnitCircle * searchRadius;
+            targetDestination = transform.position + (Vector3)Random.insideUnitCircle * searchRadius;
+            targetDestination.z = transform.position.z;
+
             if (!Physics.CheckSphere(targetDestination, 0.1f, avoidanceMask))
                 break;
+
             searchRadius *= 1.05f;
         } while (true);
-        
-        targetDestination.z = transform.position.z;
     }
 
     public void ChangeState(AIState newState)
     {
         currentState = newState;
+
         switch (currentState)
         {
             case AIState.IDLE:
                 idleTimer = Random.Range(0.5f, 2f);
                 break;
+
             case AIState.RANDOM_PATROL:
                 PickTargetDestinationRandomly();
+                patrolGiveupTimer = 0f;
                 break;
+
             case AIState.CHASE_PLAYER:
                 chasingPlayer = true;
                 break;
@@ -150,7 +164,9 @@ public class Enemy : MonoBehaviour
         switch (currentState)
         {
             case AIState.IDLE:
-                if (idleTimer > 0)
+                targetDir = Vector3.zero;
+
+                if (idleTimer > 0f)
                 {
                     idleTimer -= Time.deltaTime;
                     if (idleTimer <= 0f)
@@ -159,122 +175,158 @@ public class Enemy : MonoBehaviour
                     }
                 }
                 break;
+
             case AIState.RANDOM_PATROL:
                 patrolGiveupTimer += Time.deltaTime;
                 if (patrolGiveupTimer > 2.5f)
                 {
                     PickTargetDestinationRandomly();
-                    patrolGiveupTimer = 0;
+                    patrolGiveupTimer = 0f;
                 }
 
                 Vector3 diff = targetDestination - transform.position;
-                //Vector3 worldDir = transform.parent.TransformDirection(diff);
-                Vector3 worldDir = diff;
+                diff.z = 0f;
 
-                if (worldDir.sqrMagnitude > 1f)
+                if (diff.sqrMagnitude > 0.001f)
                 {
-                    worldDir.z = 0;
-                    if(avoidanceTakeOverTimer <= 0)
-                        targetDir = worldDir;
-                    
-                    MoveTowardsDirection();
+                    targetDir = diff.normalized;
+                    lastNonZeroTargetDir = targetDir;
                 }
                 else
                 {
                     ChangeState(AIState.IDLE);
                 }
                 break;
+
             case AIState.CHASE_PLAYER:
-                //targetDestination = transform.parent.InverseTransformPoint(GameManager.Instance.player.transform.position);
                 targetDestination = GameManager.Instance.player.transform.position;
-                Vector3 diff2 = (targetDestination - transform.position);
-                //Vector3 worldDirection2 = transform.parent.TransformDirection(diff2);
-                Vector3 worldDirection2 = diff2.normalized;
-                worldDirection2.z = 0;
-                targetDir = worldDirection2;
-                MoveTowardsDirection();
+
+                Vector3 diff2 = targetDestination - transform.position;
+                diff2.z = 0f;
+
+                if (diff2.sqrMagnitude > 0.001f)
+                {
+                    targetDir = diff2.normalized;
+                    lastNonZeroTargetDir = targetDir;
+                }
                 break;
         }
     }
 
-    void MoveTowardsDirection()
+    void HandleMovementPhysics()
     {
-        //Debug.Log("MoveTowardsDirection");
-        if (stunTimer > 0)
-            return;
-
-        RotateTowardsTarget();
-
-        //float mult = 1f;
-        //if (chasingPlayer)
-        //{
-        //    mult = chaseSpeedMult;
-        //}
-
-        //transform.position += targetDir.normalized * moveSpeed * mult * Time.deltaTime;
-        //rb.position = transform.position;
-
-        if (targetDir.sqrMagnitude < 0.0001f)
+        if (stunTimer > 0f)
         {
             rb.linearVelocity = Vector3.zero;
             return;
         }
 
-        //i know this is on UPDATE and not on FIXED update but is just setting the velocity of the RB so it should be fiiiiiiiiiinne?
-        //Also it NEEDS fixed delta time so we can maybe speed up the game later as a endless thing and or switch the frequency of fixed delta time
-        rb.linearVelocity = targetDir.normalized * ((chasingPlayer ? chaseSpeed : baseSpeed) + (signalMeshReceiver != null ? signalMeshReceiver.SignalStrength : 0) * extraSgnalSpeed);
+        RotateTowardsTarget();
+
+        Vector3 moveDir = targetDir;
+
+        if (moveDir.sqrMagnitude < 0.0001f)
+        {
+            rb.linearVelocity = Vector3.zero;
+            return;
+        }
+
+        float moveSpeed = (chasingPlayer ? chaseSpeed : baseSpeed) +
+                          (signalMeshReceiver != null ? signalMeshReceiver.SignalStrength : 0f) * extraSgnalSpeed;
+
+        rb.linearVelocity = moveDir.normalized * moveSpeed;
     }
 
     void RotateTowardsTarget()
     {
-        //Debug.Log("RotateTowardsTarget");
-
-        //This was causing some weird issues so i turned it off for now until we get the game feeling better
         HandleLocalAvoidance();
 
-        Quaternion targetRotation = Quaternion.LookRotation(transform.forward, targetDir);
-        Quaternion rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotSpeed);
-        rb.rotation = rotation;
-        
-        Debug.DrawRay(transform.position, targetDir, Color.purple);
-        Debug.DrawRay(transform.position, targetDestination-transform.position, Color.yellow);
-    }
+        Vector3 dirToUse = targetDir;
 
-    //This was causing some weird issues so i turned it off for now until we get the game feeling better
-    void HandleLocalAvoidance()
-    {
-        //Debug.Log("HandleLocalAvoidance");
-        avoidanceCooldown -= Time.deltaTime;
-        avoidanceTakeOverTimer -= Time.deltaTime;
-
-        RaycastHit[] collisions = new RaycastHit[10];
-        Physics.SphereCastNonAlloc(transform.position+transform.up*0.1f, 0.1f, transform.up, collisions, avoidanceCheckDistance, avoidanceMask);
-        foreach (RaycastHit hit in collisions)
+        if (dirToUse.sqrMagnitude > 0.0001f)
         {
-            if (hit.collider == null)
-                continue;
-
-            if (hit.collider.gameObject == gameObject)
-            {
-                continue;
-            }
-
-            if (avoidanceCooldown <= 0)
-            {
-                avoidanceTargetDir = hit.normal;
-                avoidanceCooldown = 0.5f;
-                avoidanceTakeOverTimer = 0.5f;
-            }
-            
-            Quaternion targetRot = Quaternion.LookRotation(transform.forward, avoidanceTargetDir);
-            Quaternion rot = Quaternion.RotateTowards(transform.rotation, targetRot, 90);
-            targetDir = rot * Vector3.up;    
-            break;
+            lastNonZeroTargetDir = dirToUse.normalized;
+        }
+        else
+        {
+            dirToUse = lastNonZeroTargetDir;
         }
 
-        
-        
-        
+        if (dirToUse.sqrMagnitude < 0.0001f)
+            return;
+
+        Quaternion targetWorldRotation = Quaternion.LookRotation(Vector3.forward, dirToUse.normalized);
+        Quaternion next = Quaternion.RotateTowards(rb.rotation, targetWorldRotation, rotSpeed * Time.fixedDeltaTime);
+
+        rb.MoveRotation(next);
+
+        Debug.DrawRay(transform.position, dirToUse.normalized, Color.purple);
+        Debug.DrawRay(transform.position, targetDestination - transform.position, Color.yellow);
+    }
+
+    void HandleLocalAvoidance()
+    {
+        if (avoidanceTakeOverTimer > 0f)
+        {
+            avoidanceTakeOverTimer -= Time.fixedDeltaTime;
+
+            if (avoidanceDir.sqrMagnitude > 0.0001f)
+            {
+                targetDir = avoidanceDir;
+            }
+
+            return;
+        }
+
+        if (targetDir.sqrMagnitude < 0.0001f)
+            return;
+
+        Vector3 desiredDir = targetDir.normalized;
+        Vector3 origin = transform.position;
+        float rayDist = avoidanceCheckDistance;
+
+        Vector3 forwardDir = desiredDir;
+        Vector3 leftDir = new Vector3(-desiredDir.y, desiredDir.x, 0f).normalized;
+        Vector3 rightDir = -leftDir;
+
+        bool hitForward = Physics.Raycast(origin, forwardDir, rayDist, avoidanceMask);
+        bool hitLeft = Physics.Raycast(origin, leftDir, rayDist * 0.75f, avoidanceMask);
+        bool hitRight = Physics.Raycast(origin, rightDir, rayDist * 0.75f, avoidanceMask);
+
+        avoidanceDir = Vector3.zero;
+        avoidanceTargetDir = Vector3.zero;
+
+        if (!hitForward)
+            return;
+
+        if (hitLeft && !hitRight)
+        {
+            avoidanceTargetDir = rightDir;
+        }
+        else if (hitRight && !hitLeft)
+        {
+            avoidanceTargetDir = leftDir;
+        }
+        else
+        {
+            avoidanceTargetDir = leftDir;
+        }
+
+        Vector3 steered = (desiredDir * 0.4f + avoidanceTargetDir * 0.6f);
+        steered.z = 0f;
+
+        if (steered.sqrMagnitude > 0.0001f)
+        {
+            steered.Normalize();
+            avoidanceDir = steered;
+            targetDir = steered;
+            avoidanceTakeOverTimer = 0.2f;
+        }
+
+        Debug.DrawRay(origin, forwardDir * rayDist, Color.red);
+        Debug.DrawRay(origin, leftDir * rayDist * 0.75f, Color.yellow);
+        Debug.DrawRay(origin, rightDir * rayDist * 0.75f, Color.yellow);
+        Debug.DrawRay(origin, targetDir.normalized * rayDist, Color.cyan);
     }
 
     void DecideIdleExitAction()
@@ -291,19 +343,29 @@ public class Enemy : MonoBehaviour
     {
         bool playerInSight = !needsDirectSight;
 
-        bool playerInVicinity = Physics.CheckSphere(transform.position + transform.up * sightConeRadius * 0.5f, sightConeRadius, LayerMask.GetMask("Player"));
+        bool playerInVicinity = Physics.CheckSphere(
+            transform.position + transform.up * sightConeRadius * 0.5f,
+            sightConeRadius,
+            LayerMask.GetMask("Player")
+        );
 
         if (playerInVicinity && needsDirectSight)
         {
-            Physics.BoxCast(transform.position, new Vector3(0.1f, 0.1f, 0.1f),
-                (GameManager.Instance.player.transform.position - transform.position).normalized, out RaycastHit hit,
-                transform.rotation, sightConeRadius);
+            Physics.BoxCast(
+                transform.position,
+                new Vector3(0.1f, 0.1f, 0.1f),
+                (GameManager.Instance.player.transform.position - transform.position).normalized,
+                out RaycastHit hit,
+                transform.rotation,
+                sightConeRadius
+            );
+
             playerInSight = hit.collider != null && hit.collider.gameObject.CompareTag("Player");
         }
 
         if (playerInVicinity && playerInSight)
         {
-            losePlayerTimer = 0;
+            losePlayerTimer = 0f;
             if (!chasingPlayer)
             {
                 ChangeState(AIState.CHASE_PLAYER);
@@ -312,26 +374,53 @@ public class Enemy : MonoBehaviour
         else if (chasingPlayer)
         {
             losePlayerTimer += Time.deltaTime;
-            if (losePlayerTimer > 1f)
+            if (losePlayerTimer > 2f)
             {
                 chasingPlayer = false;
                 ChangeState(AIState.IDLE);
             }
         }
-
     }
 
     void HandleCurrentZone()
     {
-        Physics.Raycast(transform.position + Vector3.back * 0.5f, Vector3.forward, out RaycastHit hit, 25, LayerMask.GetMask("Zone"));
+        Physics.Raycast(
+            transform.position + Vector3.back * 0.5f,
+            Vector3.forward,
+            out RaycastHit hit,
+            25f,
+            LayerMask.GetMask("Zone")
+        );
+
         if (hit.collider != null)
         {
-            if (transform.parent != hit.transform.parent)
+            Transform newZone = hit.transform.parent;
+
+            if (currentZone != newZone)
             {
-                transform.SetParent(hit.transform.parent, true);
+                currentZone = newZone;
+                if (currentZone != null)
+                    lastZoneRotation = currentZone.rotation;
             }
+        }
+        else
+        {
+            currentZone = null;
         }
     }
 
+    void HandleZoneRotation()
+    {
+        if (currentZone == null)
+            return;
 
+        Quaternion deltaRotation = currentZone.rotation * Quaternion.Inverse(lastZoneRotation);
+
+        Vector3 offset = rb.position - currentZone.position;
+        offset = deltaRotation * offset;
+
+        rb.MovePosition(currentZone.position + offset);
+
+        lastZoneRotation = currentZone.rotation;
+    }
 }

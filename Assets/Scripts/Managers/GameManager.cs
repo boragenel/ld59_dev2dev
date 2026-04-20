@@ -42,10 +42,13 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private float signalLosFadeInDuration = 0.25f;
     [SerializeField]
-    private float signalLosFadeInDelay = 1f;
+    private float signalLosFadeInDelay = 0.1f;
+
+    public float gameTimer = 0f;
 
     [Header("Key Objects")]
     public PlayerController player;
+    public SpriteRenderer transitionDepths;
 
     ///
     /// EVENTS
@@ -157,6 +160,12 @@ public class GameManager : MonoBehaviour
         ChangeGameState(GamePhase.GAMEPLAY);
     }
 
+    void Update()
+    {
+        gameTimer += Time.deltaTime;
+        uiManager.UpdateSpeedRunTimer(gameTimer);
+    }
+    
     private void SetPlayerBuildLocked(bool lockedForBuild) {
         if (player == null) {
             player = PlayerController.Instance;
@@ -189,6 +198,22 @@ public class GameManager : MonoBehaviour
         //ChangeGameState(GamePhase.BUILDING);
         SetPlayerToStartPos();
     }
+
+    public void RestartLevel()
+    {
+        if (currentLevel != null)
+        {
+            Destroy(currentLevel.gameObject);
+        }
+        
+        currentLevel = LevelOrderPrefabs[currentLevelIndex];
+        currentLevel = Instantiate(currentLevel.gameObject).GetComponent<LevelBase>();
+
+        PlayerController.Instance.gameObject.SetActive(true);
+        //ChangeGameState(GamePhase.BUILDING);
+        SetPlayerToStartPos();
+    }
+    
     public GameObject GetNextLevelPrefab()
     {
         currentLevelIndex++;
@@ -218,7 +243,7 @@ public class GameManager : MonoBehaviour
             //put destruction effects here, time delay, loading screen, idfks
             yield return new WaitForSecondsRealtime(0.5f);
             SetZoneRotationsEnabled(true);
-            StartNewGame();
+            RestartLevel();
         }
     }
 
@@ -250,15 +275,15 @@ public class GameManager : MonoBehaviour
             pc.transform.position = pos;
             pc.transform.DOScale(1f, 0.25f).OnComplete(() => {
                 GameManager.Instance.isTransitioning = false;
+                pc.controlsEnabled = GameManager.Instance != null && GameManager.Instance.GetCurrentGamePhase() == GamePhase.GAMEPLAY;
+                pc.collision.SetActive(true);
+                pc.ResetRigidbody();
+                pos = pc.transform.localPosition;
+                pos.z = 0;
+                pc.transform.localPosition = pos;
                 GameManager.Instance.ScheduleSignalLosFadeInAfterDelay(() => {
-                    pc.controlsEnabled = GameManager.Instance != null && GameManager.Instance.GetCurrentGamePhase() == GamePhase.GAMEPLAY;
-                    pc.collision.SetActive(true);
-                    pc.ResetRigidbody();
-                    pos = pc.transform.localPosition;
-                    pos.z = 0;
-                    pc.transform.localPosition = pos;
                     SetZoneRotationsEnabled(true);
-                    entranceGate.DOScale(0, 0.5f).SetDelay(0.4f);
+                    entranceGate.DOScale(0, 0.5f).SetDelay(0.1f);
                 });
             });
         }

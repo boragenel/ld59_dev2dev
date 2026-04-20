@@ -153,9 +153,14 @@ public class PlayerController : MonoBehaviour
                 Destroy(enemy.gameObject);
 
             GameManager.Instance.TriggerGameOverSequence();
-        } else if (collision.collider.CompareTag("Sawblade"))
+        } 
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Sawblade"))
         {
-            var sawblade = collision.collider.GetComponentInParent<Sawblade>();
+            var sawblade = collision.GetComponentInParent<Sawblade>();
             if(sawblade && sawblade.isOn)
                 GameManager.Instance.TriggerGameOverSequence();
         }

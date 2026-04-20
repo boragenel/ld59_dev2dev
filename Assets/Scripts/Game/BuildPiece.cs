@@ -26,4 +26,18 @@ public class BuildPiece : MonoBehaviour {
             lockSprite.SetActive(isLocked);
         }
     }
+
+    public void HandleCurrentZone()
+    {
+        Physics.Raycast(transform.position + Vector3.back * 0.5f, Vector3.forward, out RaycastHit hit, 25, LayerMask.GetMask("Zone"));
+        if (hit.collider != null)
+        {
+            if (transform.parent != hit.transform.parent)
+            {
+                transform.SetParent(hit.transform.parent, true);
+            }
+        }
+    }
+    
+    
 }

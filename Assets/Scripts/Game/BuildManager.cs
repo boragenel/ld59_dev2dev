@@ -173,6 +173,7 @@ public class BuildManager : MonoBehaviour {
 
     private void PlaceCarried() {
         carriedPiece.GetComponentInChildren<Collider>().enabled = true;
+        carriedPiece.GetComponent<BuildPiece>()?.HandleCurrentZone();
         carriedPiece = null;
         GameManager.Instance.player.ToggleBuildingLinkVisibility(false);
     }
@@ -185,6 +186,7 @@ public class BuildManager : MonoBehaviour {
         carriedPiece.position = storedWorldPosition;
         carriedPiece.rotation = storedWorldRotation;
         carriedPiece.GetComponentInChildren<Collider>().enabled = true;
+        carriedPiece.GetComponent<BuildPiece>()?.HandleCurrentZone();
         carriedPiece = null;
         GameManager.Instance.player.ToggleBuildingLinkVisibility(false);
     }

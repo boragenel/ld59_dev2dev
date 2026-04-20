@@ -513,11 +513,11 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 0.33
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1087611121501882040
 MonoBehaviour:
@@ -532,6 +532,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   rotator: {fileID: 6591207142049145441}
+  isOn: 0
   moveDuration: 0
 --- !u!114 &6235101547719884479
 MonoBehaviour:

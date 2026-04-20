@@ -47,24 +47,32 @@ public class Gate : MonoBehaviour
             pc.transform.SetParent(null, true);
             pc.PlayerSignalReceiver.ResetSources();
             pc.transform.DOScale(0, 0.15f);
-            levelFrom.transform.position += Vector3.forward * 30;
-            //levelFrom.transform.DOScale(1.25f, 0.5f).OnComplete(() =>
-            //{
-            //    levelFrom.transform.DOScale(0, 1f).OnComplete(() =>
-            //    {
-            //        levelFrom.gameObject.SetActive(false);
-            //        Destroy(levelFrom);
-            //    });
-            //});
+            levelFrom.transform.position += Vector3.forward * 100;
+            GameManager.Instance.transitionDepths.DOFade(1f, 0.25f).SetDelay(0.25f).OnComplete(() =>
+            {
+                foreach (BuildPiece bp in levelFrom.GetComponentsInChildren<BuildPiece>())
+                {
+                    bp.gameObject.SetActive(false);
+                }    
+            });
+            
+            levelFrom.transform.DOScale(10f, 1f).OnComplete(() =>
+            {
+                levelFrom.gameObject.SetActive(false);
+                Destroy(levelFrom);
+                GameManager.Instance.transitionDepths.DOFade(0f, 0.5f);
+            });
+            /*
             levelFrom.transform.DOScale(0, 1f).OnComplete(() =>
             {
                 levelFrom.gameObject.SetActive(false);
                 Destroy(levelFrom);
             });
+            */
 
             levelTo.SetActive(true);
             levelTo.transform.localScale = Vector3.one * 0.01f;
-            levelTo.transform.DOScale(1f, 0.5f).OnComplete(() => {
+            levelTo.transform.DOScale(1f, 1f).OnComplete(() => {
                 GameManager.Instance.SetPlayerToStartPos();
             });
 

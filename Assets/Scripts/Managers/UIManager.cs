@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,7 @@ public class UIManager : MonoBehaviour
     [Header("HUD Elements")]
     public Button pauseButton;
     public Transform signalStickContainer;
+    public TextMeshProUGUI speedRunTimer;
     [Header("Popups")]
     public GameObject settings;
 
@@ -29,6 +31,12 @@ public class UIManager : MonoBehaviour
         //UpdateReceptionVisuals(PlayerController.Instance.PlayerSignalReceiver.ReceptionStrenght);
     }
 
+    public void UpdateSpeedRunTimer(float time)
+    {
+        TimeSpan timeSpan = TimeSpan.FromSeconds(time);
+        speedRunTimer.text = timeSpan.ToString(@"mm\:ss\:ff");
+    }
+    
     public void UpdateReceptionVisuals(float inReception)
     {
         DisableAllSignalSticks();

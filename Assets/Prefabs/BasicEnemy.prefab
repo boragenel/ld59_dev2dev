@@ -237,16 +237,16 @@ MonoBehaviour:
   idleTimer: 0
   maxHp: 3
   currentHP: 0
-  baseSpeed: 1.25
+  baseSpeed: 0.75
   chaseSpeed: 1.75
   extraSgnalSpeed: 0.6875
-  rotSpeed: 6
+  rotSpeed: 360
   needsDirectSight: 1
   sightConeRadius: 3
-  avoidanceCheckDistance: 0.8
+  avoidanceCheckDistance: 0.3
   avoidanceMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 768
   avoidanceDir: {x: 0, y: 0, z: 0}
   avoidanceTargetDir: {x: 0, y: 0, z: 0}
   avoidanceCooldown: 0
