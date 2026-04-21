@@ -88,9 +88,9 @@ public class Enemy : MonoBehaviour
                 ChangeState(AIState.IDLE);
                 break;
         }
-        
-        Invoke("ResetScale",0.5f); // temp fix
-        
+
+        Invoke("ResetScale", 0.5f); // temp fix
+
     }
 
     public void ResetScale()
@@ -98,9 +98,11 @@ public class Enemy : MonoBehaviour
         transform.DOKill();
         transform.DOScale(1f, 0.25f);
     }
-    
+
     void Update()
     {
+        if (GameManager.Instance.isTransitioning) return;
+
         if (stunTimer > 0f)
         {
             stunTimer -= Time.deltaTime;
@@ -109,10 +111,10 @@ public class Enemy : MonoBehaviour
         HandleCurrentZone();   // manage parenting only
         HandlePerception();
         HandleCurrentState();
-        
+
     }
 
-    
+
 
     void FixedUpdate()
     {
@@ -128,7 +130,7 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            SoundManager.Instance.PlayOneShot(SoundType.ENEMY_HIT,0.5f,Random.Range(0.8f,1.2f));
+            SoundManager.Instance.PlayOneShot(SoundType.ENEMY_HIT, 0.5f, Random.Range(0.8f, 1.2f));
             ChangeState(AIState.CHASE_PLAYER);
         }
     }
@@ -139,7 +141,7 @@ public class Enemy : MonoBehaviour
         {
             deathVfx.SpawnVfx(transform.position, Quaternion.identity);
         }
-        SoundManager.Instance.PlayOneShot(SoundType.ENEMY_DEATH,0.5f,Random.Range(0.8f,1.2f));
+        SoundManager.Instance.PlayOneShot(SoundType.ENEMY_DEATH, 0.5f, Random.Range(0.8f, 1.2f));
         Destroy(gameObject);
     }
 
