@@ -45,6 +45,7 @@ public class Sawblade : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (GameManager.Instance.isTransitioning) return;
         bool hasSignalNow = signalReceiver != null && signalReceiver.SignalStrength > 0f;
         hasSignalNow = REVERSED ? !hasSignalNow : hasSignalNow;
 
