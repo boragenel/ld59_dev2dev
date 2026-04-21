@@ -236,6 +236,10 @@ public class GameManager : MonoBehaviour
     {
 
     }
+    public void BUTTON_SelfDestruct()
+    {
+        PlayerController.Instance.Death();
+    }
     public void TriggerGameOverSequence()
     {
         Debug.Log("GAME OVER");
