@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: REVERSED
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4593800362183121806, guid: 4e20be473d08f08409908f03641b1c98, type: 3}
+      propertyPath: moveDuration
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4735871178686390637, guid: 4e20be473d08f08409908f03641b1c98, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
