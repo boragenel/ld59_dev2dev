@@ -52,7 +52,7 @@ MonoBehaviour:
   openWhenStrengthAtLeast: 1
   openSlideDistance: 1
   openDuration: 0.35
-  isOpen: 0
+  REVERSE: 0
 --- !u!1 &2057891896898747605
 GameObject:
   m_ObjectHideFlags: 0
@@ -82,8 +82,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.73, y: 0, z: 0}
-  m_LocalScale: {x: 1.33, y: 0.35395157, z: 0.59641284}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1.33, y: 0.35395157, z: 3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1413249196081869894}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -194,8 +194,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.64, y: -0, z: 0}
-  m_LocalScale: {x: 1.33, y: 0.35395157, z: 0.59641284}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1.33, y: 0.35395157, z: 3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1413249196081869894}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
