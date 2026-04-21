@@ -184,7 +184,6 @@ public class PlayerController : MonoBehaviour
                 Destroy(enemy.gameObject);
 
             Death();
-            GameManager.Instance.TriggerGameOverSequence();
         }
     }
 
@@ -195,8 +194,7 @@ public class PlayerController : MonoBehaviour
             var sawblade = other.GetComponentInParent<Sawblade>();
             if (sawblade)// && sawblade.IsOn)
             {
-                SoundManager.Instance.PlayOneShot(SoundType.SAW_DEATH, 0.5f, Random.Range(0.8f, 1.2f));
-                GameManager.Instance.TriggerGameOverSequence();
+                
                 Death();
             }
 
@@ -205,6 +203,8 @@ public class PlayerController : MonoBehaviour
 
     public void Death()
     {
+        SoundManager.Instance.PlayOneShot(SoundType.SAW_DEATH, 0.5f, Random.Range(0.8f, 1.2f));
+        GameManager.Instance.TriggerGameOverSequence();
         SoundManager.Instance.PlayOneShot(SoundType.PLAYER_DEATH, 0.5f, Random.Range(0.8f, 1.2f));
     }
 }
