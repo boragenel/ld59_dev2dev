@@ -1510,6 +1510,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 216141881}
   m_CullTransparentMesh: 1
+--- !u!114 &229777321 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 308405115646712137, guid: 449d689dd4970414086f95ccf9b06f26, type: 3}
+  m_PrefabInstance: {fileID: 1842651643}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c6ce4edb45a1948bed9217b187b735, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &242283788
 GameObject:
   m_ObjectHideFlags: 0
@@ -46676,6 +46687,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: ending
+      value: 
+      objectReference: {fileID: 2124015069}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 229777321}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: uiManager
+      value: 
+      objectReference: {fileID: 2000274981}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: soundManager
+      value: 
+      objectReference: {fileID: 49963841}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: transitionDepths
+      value: 
+      objectReference: {fileID: 187873405}
     - target: {fileID: 2526171124326009767, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
       propertyPath: m_Name
       value: GameManager
