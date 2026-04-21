@@ -224,6 +224,7 @@ public class GameManager : MonoBehaviour
     
     public GameObject GetNextLevelPrefab()
     {
+        Debug.Log("GETTING NEXT LEVEL");
         currentLevelIndex++;
         if (currentLevelIndex >= LevelOrderPrefabs.Count) 
         {
