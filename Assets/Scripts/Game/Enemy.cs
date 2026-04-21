@@ -24,7 +24,6 @@ public class Enemy : MonoBehaviour
     private SignalMeshPointReceiver signalMeshReceiver;
 
     [SerializeField]
-    [ReadOnlyAttribute]
     private AIState currentState;
 
     public Vector3 targetDestination;

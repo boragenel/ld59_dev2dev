@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class LevelBase : MonoBehaviour {
     public GameObject levelEntrance;
-    [ReadOnly] public Gate levelExit;
-    [ReadOnly] public int keyCount = 0;
+    public Gate levelExit;
+    public int keyCount = 0;
     public static event Action<int> keyCountChanged;
 
 

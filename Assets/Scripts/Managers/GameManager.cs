@@ -31,7 +31,6 @@ public class GameManager : MonoBehaviour
     [Header("Game Phase")]
     public GamePhase startingGamePhase = GamePhase.NONE;
     [SerializeField]
-    [ReadOnlyAttribute]
     private GamePhase currentGamePhase = GamePhase.NONE;
 
     [Header("Game Dynamics")]
@@ -61,7 +60,7 @@ public class GameManager : MonoBehaviour
     public List<LevelBase> LevelOrderPrefabs;
     public int currentLevelIndex = 0; //if it ends up being endless need to handle overflow and picking a random one with some difficulty modifiers, maybe enemy speed is extra for every value above the list count?
 
-    [ReadOnly] public LevelBase currentLevel;
+    public LevelBase currentLevel;
 
     public bool gameWon = false;
     
