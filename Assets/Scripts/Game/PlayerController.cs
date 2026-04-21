@@ -35,13 +35,15 @@ public class PlayerController : MonoBehaviour
     private Color buildingLinkStartDefault;
     private Color buildingLinkEndDefault;
 
-    private void Awake() {
+    private void Awake()
+    {
         Instance = this;
         rb = GetComponent<Rigidbody>();
         PlayerSignalReceiver = GetComponentInChildren<SignalMeshPointReceiver>();
         weapon.signalMeshReceiver = PlayerSignalReceiver;
         footstepSource = GetComponent<AudioSource>();
-        if (buildinkLinkRenderer != null) {
+        if (buildinkLinkRenderer != null)
+        {
             buildingLinkStartDefault = buildinkLinkRenderer.startColor;
             buildingLinkEndDefault = buildinkLinkRenderer.endColor;
         }
@@ -73,26 +75,30 @@ public class PlayerController : MonoBehaviour
         if (controlsEnabled)
         {
             HandleRotation();
-//            if(BuildManager.Instance.carriedPiece == null)
-//            {
-            HandleMovement();    
-//            }
-            
+            //            if(BuildManager.Instance.carriedPiece == null)
+            //            {
+            HandleMovement();
+            //            }
+
         }
-        
+
     }
 
-    public void UpdateBuldingLink(Vector3 inPos, bool sightClear = true) {
+    public void UpdateBuldingLink(Vector3 inPos, bool sightClear = true)
+    {
         Vector3 from = transform.position;
         Vector3 to = inPos;
         from.z += buildingLinkZOffset;
         to.z += buildingLinkZOffset;
         buildinkLinkRenderer.SetPosition(0, from);
         buildinkLinkRenderer.SetPosition(1, to);
-        if (sightClear) {
+        if (sightClear)
+        {
             buildinkLinkRenderer.startColor = buildingLinkStartDefault;
             buildinkLinkRenderer.endColor = buildingLinkEndDefault;
-        } else {
+        }
+        else
+        {
             buildinkLinkRenderer.startColor = buildingLinkInvalidColor;
             buildinkLinkRenderer.endColor = buildingLinkInvalidColor;
         }
@@ -102,11 +108,12 @@ public class PlayerController : MonoBehaviour
     {
         buildinkLinkRenderer.enabled = value;
     }
-    
+
     private void FixedUpdate()
     {
         HandleCurrentZone();
-        if (controlsEnabled) {
+        if (controlsEnabled)
+        {
             HandleMovement();
         }
     }
@@ -169,7 +176,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!controlsEnabled)
             return;
-        
+
         if (collision.collider.CompareTag("Enemy"))
         {
             var enemy = collision.collider.GetComponentInParent<Enemy>();
@@ -178,7 +185,7 @@ public class PlayerController : MonoBehaviour
 
             Death();
             GameManager.Instance.TriggerGameOverSequence();
-        } 
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -186,18 +193,18 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Sawblade"))
         {
             var sawblade = other.GetComponentInParent<Sawblade>();
-            if (sawblade && sawblade.isOn)
+            if (sawblade)// && sawblade.IsOn)
             {
-                SoundManager.Instance.PlayOneShot(SoundType.SAW_DEATH,0.5f,Random.Range(0.8f,1.2f));
+                SoundManager.Instance.PlayOneShot(SoundType.SAW_DEATH, 0.5f, Random.Range(0.8f, 1.2f));
                 GameManager.Instance.TriggerGameOverSequence();
                 Death();
             }
-                
+
         }
     }
 
     public void Death()
     {
-        SoundManager.Instance.PlayOneShot(SoundType.PLAYER_DEATH,0.5f,Random.Range(0.8f,1.2f));
+        SoundManager.Instance.PlayOneShot(SoundType.PLAYER_DEATH, 0.5f, Random.Range(0.8f, 1.2f));
     }
 }
