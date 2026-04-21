@@ -27,6 +27,7 @@ public class Sawblade : MonoBehaviour
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    float delay;
     void Start()
     {
         signalReceiver = GetComponentInChildren<SignalMeshPointReceiver>();
@@ -40,11 +41,21 @@ public class Sawblade : MonoBehaviour
 
             backNForthTween = rotator.transform.DOLocalMoveY(movimentValue, moveDuration).SetLoops(-1, LoopType.Yoyo)
                 .SetDelay(startDelay);
+
+            backNForthTween.Pause();
         }
+
+        delay = Time.time;
     }
 
     private void LateUpdate()
     {
+        if (REVERSED)
+        {
+            if (delay + 1 >= Time.time)
+                return;
+        }
+
         if (GameManager.Instance.isTransitioning) return;
         bool hasSignalNow = signalReceiver != null && signalReceiver.SignalStrength > 0f;
         hasSignalNow = REVERSED ? !hasSignalNow : hasSignalNow;
