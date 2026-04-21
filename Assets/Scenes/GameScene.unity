@@ -46801,7 +46801,7 @@ MonoBehaviour:
     m_Bits: 32768
   raycastMaxDistance: 200
   planeZ: 0
-  rotateScrollDegrees: 12
+  rotateScrollDegrees: 6
   rotateKeyDegreesPerSecond: 120
   carriedPiece: {fileID: 0}
   hoveredPiece: {fileID: 0}
@@ -46994,6 +46994,30 @@ PrefabInstance:
       propertyPath: transitionDepths
       value: 
       objectReference: {fileID: 187873405}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: 'LevelOrderPrefabs.Array.data[0]'
+      value: 
+      objectReference: {fileID: 378678611591577018, guid: 2d10d95c43c1ab64f90d46870396a7c4, type: 3}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: 'LevelOrderPrefabs.Array.data[1]'
+      value: 
+      objectReference: {fileID: 7475852346799759515, guid: 81c5c811b1967c044b20e61d7b96dfee, type: 3}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: 'LevelOrderPrefabs.Array.data[2]'
+      value: 
+      objectReference: {fileID: 7475852346799759515, guid: b15d563d319635747b3425859da19273, type: 3}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: 'LevelOrderPrefabs.Array.data[3]'
+      value: 
+      objectReference: {fileID: 378678611591577018, guid: 97c1352522c4a40429fcd9af013f771e, type: 3}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: 'LevelOrderPrefabs.Array.data[4]'
+      value: 
+      objectReference: {fileID: 7475852346799759515, guid: 0d49a521a3ec7154f8018abd655dd7ab, type: 3}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: 'LevelOrderPrefabs.Array.data[5]'
+      value: 
+      objectReference: {fileID: 3374356711304202962, guid: 7a5a4f134758fcb4b95fc28bcf4fbf82, type: 3}
     - target: {fileID: 2526171124326009767, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
       propertyPath: m_Name
       value: GameManager
