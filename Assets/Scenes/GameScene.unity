@@ -12017,7 +12017,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 300.97678}
-  m_SizeDelta: {x: 729.01, y: 96.8797}
+  m_SizeDelta: {x: 833.3835, y: 96.8797}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &460427689
 MonoBehaviour:
@@ -12039,7 +12039,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: SPIRALED OUT IN
+  m_text: THE SIGNAL LED YOU HERE IN
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f39f515830ffd04585722c60631908e, type: 2}
   m_sharedMaterial: {fileID: -5368329665140613237, guid: 8f39f515830ffd04585722c60631908e, type: 2}
@@ -12066,8 +12066,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 96.1
-  m_fontSizeBase: 96.1
+  m_fontSize: 62.8
+  m_fontSizeBase: 62.8
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -46707,6 +46707,18 @@ PrefabInstance:
       propertyPath: transitionDepths
       value: 
       objectReference: {fileID: 187873405}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: 'LevelOrderPrefabs.Array.data[0]'
+      value: 
+      objectReference: {fileID: 7475852346799759515, guid: 81c5c811b1967c044b20e61d7b96dfee, type: 3}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: 'LevelOrderPrefabs.Array.data[1]'
+      value: 
+      objectReference: {fileID: 7475852346799759515, guid: b15d563d319635747b3425859da19273, type: 3}
+    - target: {fileID: 2497980102357920874, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
+      propertyPath: 'LevelOrderPrefabs.Array.data[2]'
+      value: 
+      objectReference: {fileID: 378678611591577018, guid: 2d10d95c43c1ab64f90d46870396a7c4, type: 3}
     - target: {fileID: 2526171124326009767, guid: 628491550ca53884b956dbe60e919f4a, type: 3}
       propertyPath: m_Name
       value: GameManager
