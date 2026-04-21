@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class CollectableKey : MonoBehaviour
 {
+    public VfxInstancer collectVfx;
+
     public void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -24,6 +26,10 @@ public class CollectableKey : MonoBehaviour
     public void Exit()
     {
         GameManager.Instance.currentLevel.OnCollectKey();
+        if (collectVfx != null)
+        {
+            collectVfx.SpawnVfx(transform.position, Quaternion.identity);
+        }
         Destroy(gameObject);
     }
     

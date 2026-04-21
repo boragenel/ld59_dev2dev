@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
     [Header("Key Objects")]
     public PlayerController player;
     public SpriteRenderer transitionDepths;
+    public GameObject ending;
 
     ///
     /// EVENTS
@@ -62,6 +63,8 @@ public class GameManager : MonoBehaviour
 
     [ReadOnly] public LevelBase currentLevel;
 
+    public bool gameWon = false;
+    
     private float signalLosFadeValue = 1f;
     private Tween signalLosFadeTween;
     private Tween signalLosFadeInDelayTween;
@@ -164,7 +167,9 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        gameTimer += Time.deltaTime;
+        if(!gameWon)
+            gameTimer += Time.deltaTime;
+        
         uiManager.UpdateSpeedRunTimer(gameTimer);
     }
     
@@ -187,6 +192,7 @@ public class GameManager : MonoBehaviour
     #region Level Handling
     public void StartNewGame()
     {
+        gameTimer = 0f;
         if (currentLevel != null)
         {
             Destroy(currentLevel.gameObject);
@@ -219,9 +225,9 @@ public class GameManager : MonoBehaviour
     public GameObject GetNextLevelPrefab()
     {
         currentLevelIndex++;
-        if (currentLevelIndex >= LevelOrderPrefabs.Count) //if not endless gotta fix this to spawn a final level that triggers victory screen?
+        if (currentLevelIndex >= LevelOrderPrefabs.Count) 
         {
-            currentLevelIndex = 0;
+            return null;
         }
         return LevelOrderPrefabs[currentLevelIndex].gameObject;
     }

@@ -39,9 +39,15 @@ public class Gate : MonoBehaviour
             //GameManager.Instance.ChangeGameState(GamePhase.BUILDING);
 
             GameObject levelFrom = GameManager.Instance.currentLevel.gameObject;
-            GameObject levelTo = Instantiate(GameManager.Instance.GetNextLevelPrefab());
+            GameObject levelTo = GameManager.Instance.GetNextLevelPrefab();
+            if (levelTo != null)
+            {
+                levelTo = Instantiate(GameManager.Instance.GetNextLevelPrefab());
+                GameManager.Instance.currentLevel = levelTo.GetComponent<LevelBase>();
+            }
+                
 
-            GameManager.Instance.currentLevel = levelTo.GetComponent<LevelBase>();
+            
 
             PlayerController pc = other.GetComponentInParent<PlayerController>();
             pc.enabled = false;
@@ -73,7 +79,11 @@ public class Gate : MonoBehaviour
                 Destroy(levelFrom);
             });
             */
-
+            if (!levelTo)
+            {
+                GameManager.Instance.ending.SetActive(true);
+                return;
+            }
             levelTo.SetActive(true);
             levelTo.transform.localScale = Vector3.one * 0.01f;
             levelTo.transform.DOScale(1f, 1f).OnComplete(() =>
