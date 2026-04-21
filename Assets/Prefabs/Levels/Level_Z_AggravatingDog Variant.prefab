@@ -2016,7 +2016,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 317847960567563310, guid: c0c44373c6c398146856662cf74e76fa, type: 3}
       propertyPath: rotateDegreesPerSecond.value.z
-      value: 45
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6195023325858860564, guid: c0c44373c6c398146856662cf74e76fa, type: 3}
       propertyPath: m_Name
@@ -2406,7 +2406,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 317847960567563310, guid: c0c44373c6c398146856662cf74e76fa, type: 3}
       propertyPath: rotateDegreesPerSecond.value.z
-      value: 75
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 6195023325858860564, guid: c0c44373c6c398146856662cf74e76fa, type: 3}
       propertyPath: m_Name
@@ -2591,7 +2591,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 317847960567563310, guid: c0c44373c6c398146856662cf74e76fa, type: 3}
       propertyPath: rotateDegreesPerSecond.value.z
-      value: -60
+      value: -45
       objectReference: {fileID: 0}
     - target: {fileID: 6153529387223686324, guid: c0c44373c6c398146856662cf74e76fa, type: 3}
       propertyPath: m_IsActive
@@ -3336,7 +3336,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1848093516623316840, guid: 1cfdaf58857c6c944b90b6f90e2cae1b, type: 3}
       propertyPath: m_Name
-      value: Level_C_AggravatingDog Variant
+      value: Level_Z_AggravatingDog Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6339584007323395491, guid: 1cfdaf58857c6c944b90b6f90e2cae1b, type: 3}
       propertyPath: moveUnitsPerSecond.value.z
