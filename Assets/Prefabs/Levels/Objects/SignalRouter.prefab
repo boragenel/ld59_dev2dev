@@ -414,10 +414,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3950298231412583136, guid: ceee54893afafc04b980c5a47a109246, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e075ec1bcc5bc864ab7aabd7cdff1bb1, type: 2}
+    - target: {fileID: 4035269432331735763, guid: ceee54893afafc04b980c5a47a109246, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 847b7dd60f5d0824198d6ce60eaa1246, type: 2}
+    - target: {fileID: 5572170636989978164, guid: ceee54893afafc04b980c5a47a109246, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e075ec1bcc5bc864ab7aabd7cdff1bb1, type: 2}
     - target: {fileID: 5789227534877766107, guid: ceee54893afafc04b980c5a47a109246, type: 3}
       propertyPath: m_Name
       value: Router Visual
       objectReference: {fileID: 0}
+    - target: {fileID: 7973967878318238784, guid: ceee54893afafc04b980c5a47a109246, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e075ec1bcc5bc864ab7aabd7cdff1bb1, type: 2}
+    - target: {fileID: 8074563072224979805, guid: ceee54893afafc04b980c5a47a109246, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e075ec1bcc5bc864ab7aabd7cdff1bb1, type: 2}
+    - target: {fileID: 8293828930962347837, guid: ceee54893afafc04b980c5a47a109246, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e075ec1bcc5bc864ab7aabd7cdff1bb1, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
