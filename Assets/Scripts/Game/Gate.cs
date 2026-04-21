@@ -46,7 +46,7 @@ public class Gate : MonoBehaviour
             GameObject levelTo = GameManager.Instance.GetNextLevelPrefab();
             if (levelTo != null)
             {
-                levelTo = Instantiate(GameManager.Instance.GetNextLevelPrefab());
+                levelTo = Instantiate(levelTo);
                 GameManager.Instance.currentLevel = levelTo.GetComponent<LevelBase>();
             }
 
