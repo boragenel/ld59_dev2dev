@@ -56,6 +56,7 @@ MonoBehaviour:
   gameTimer: 0
   player: {fileID: 0}
   transitionDepths: {fileID: 0}
+  ending: {fileID: 0}
   LevelOrderPrefabs:
   - {fileID: 378678611591577018, guid: 2d10d95c43c1ab64f90d46870396a7c4, type: 3}
   - {fileID: 7475852346799759515, guid: 81c5c811b1967c044b20e61d7b96dfee, type: 3}
@@ -63,10 +64,11 @@ MonoBehaviour:
   - {fileID: 378678611591577018, guid: 97c1352522c4a40429fcd9af013f771e, type: 3}
   - {fileID: 3374356711304202962, guid: 7a5a4f134758fcb4b95fc28bcf4fbf82, type: 3}
   - {fileID: 7475852346799759515, guid: 0d49a521a3ec7154f8018abd655dd7ab, type: 3}
-  - {fileID: 1608451579729030730, guid: 9a2732fbcf838a647b161b4316ebc7f1, type: 3}
   - {fileID: 649891764021861945, guid: 7fcbc18c04045884180a02ae9cd2a53e, type: 3}
+  - {fileID: 1608451579729030730, guid: 9a2732fbcf838a647b161b4316ebc7f1, type: 3}
   currentLevelIndex: 0
   currentLevel: {fileID: 0}
+  gameWon: 0
   playerDeathVfx:
     vfxPrefab: {fileID: 8167975121848204796, guid: 614a2ce01e282fb479b6f2a795865b01, type: 3}
     destroyDelay: 1
