@@ -27,11 +27,15 @@ public class Gate : MonoBehaviour
 
     }
 
+    private bool FUCK;
     private void OnTriggerEnter(Collider other)
     {
         if (isLocked) return;
         if (other.CompareTag("Player"))
         {
+            if (FUCK) return;
+
+            FUCK = true;
             SoundManager.Instance.PlayOneShot(SoundType.TRANSITION, 0.7f);
             GameManager.OnLevelClear?.Invoke();
             GameManager.Instance.isTransitioning = true;
@@ -39,9 +43,12 @@ public class Gate : MonoBehaviour
             //GameManager.Instance.ChangeGameState(GamePhase.BUILDING);
 
             GameObject levelFrom = GameManager.Instance.currentLevel.gameObject;
-            GameObject levelTo = Instantiate(GameManager.Instance.GetNextLevelPrefab());
-
-            GameManager.Instance.currentLevel = levelTo.GetComponent<LevelBase>();
+            GameObject levelTo = GameManager.Instance.GetNextLevelPrefab();
+            if (levelTo != null)
+            {
+                levelTo = Instantiate(GameManager.Instance.GetNextLevelPrefab());
+                GameManager.Instance.currentLevel = levelTo.GetComponent<LevelBase>();
+            }
 
             PlayerController pc = other.GetComponentInParent<PlayerController>();
             pc.enabled = false;
@@ -73,7 +80,11 @@ public class Gate : MonoBehaviour
                 Destroy(levelFrom);
             });
             */
-
+            if (!levelTo)
+            {
+                GameManager.Instance.ending.SetActive(true);
+                return;
+            }
             levelTo.SetActive(true);
             levelTo.transform.localScale = Vector3.one * 0.01f;
             levelTo.transform.DOScale(1f, 1f).OnComplete(() =>
