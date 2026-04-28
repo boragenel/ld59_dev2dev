@@ -243,7 +243,7 @@ MonoBehaviour:
   rotSpeed: 360
   needsDirectSight: 1
   sightConeRadius: 3
-  avoidanceCheckDistance: 0.3
+  avoidanceCheckDistance: 0.5
   avoidanceMask:
     serializedVersion: 2
     m_Bits: 768

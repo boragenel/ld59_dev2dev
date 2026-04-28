@@ -159,7 +159,7 @@ public class Enemy : MonoBehaviour
             targetDestination = transform.position + (Vector3)Random.insideUnitCircle * searchRadius;
             targetDestination.z = transform.position.z;
 
-            if (!Physics.CheckSphere(targetDestination, 0.1f, avoidanceMask))
+            if (!Physics.CheckSphere(targetDestination, 0.1f, avoidanceMask) && !Physics.Raycast(transform.position,targetDestination-transform.position,(targetDestination-transform.position).magnitude,avoidanceMask))
                 break;
 
             searchRadius *= 1.05f;
@@ -408,7 +408,7 @@ public class Enemy : MonoBehaviour
         else if (chasingPlayer)
         {
             losePlayerTimer += Time.deltaTime;
-            if (losePlayerTimer > 2f)
+            if (losePlayerTimer > 3f)
             {
                 chasingPlayer = false;
                 ChangeState(AIState.IDLE);
